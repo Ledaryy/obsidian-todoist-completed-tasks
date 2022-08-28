@@ -1,10 +1,10 @@
 {
-	"id": "obsidian-todoist-completed-tasks-plugin",
+	"id": "todoist-completed-tasks-plugin",
 	"name": "Todoist completed tasks",
-	"version": "1.0.1",
-	"minAppVersion": "0.12.0",
-	"description": "This plugin presents finished tasks from todoist api.",
-	"author": "Ledaryy",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "This is a plugin for Obsidian, that fetches completed tasks from todoist API",
+	"author": "Andrew 'Ledary' Kulishov",
 	"authorUrl": "https://github.com/Ledaryy",
 	"isDesktopOnly": false
 }

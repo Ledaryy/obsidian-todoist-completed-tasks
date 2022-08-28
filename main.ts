@@ -1,5 +1,4 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
-import fetch from 'node-fetch';
 
 // Remember to rename these classes and interfaces!
 
@@ -28,10 +27,6 @@ export default class MyPlugin extends Plugin {
 		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
 		const statusBarItemEl = this.addStatusBarItem();
 		statusBarItemEl.setText('Status Bar Text');
-
-
-		
-
 
 		// This adds a simple command that can be triggered anywhere
 		this.addCommand({
@@ -75,10 +70,8 @@ export default class MyPlugin extends Plugin {
 
 		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
 		// Using this function will automatically remove the event listener when this plugin is disabled.
-		
 		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
 			console.log('click', evt);
-			
 		});
 
 		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
