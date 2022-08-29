@@ -38,11 +38,14 @@ export async function updateFileFromServer(
 		)[1];
 		chunkForReplace = chunkForReplace.split(settings.keywordSegmentEnd)[0];
 
+		chunkForReplace = `${settings.keywordSegmentStart}${chunkForReplace}${settings.keywordSegmentEnd}`;
+		formattedTodos = `${settings.keywordSegmentStart}${formattedTodos}${settings.keywordSegmentEnd}`;
+
 		const newData = fileContents.replace(chunkForReplace, formattedTodos);
 
 		await app.vault.modify(file, newData);
 	} else {
-		new Notice("No keyword found in file");
+		new Notice("TCT: No segment keywords found in file");
 	}
 }
 
