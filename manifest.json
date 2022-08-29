@@ -3,7 +3,7 @@
 	"name": "Todoist completed tasks",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "This is a plugin for Obsidian, that fetches completed tasks from todoist API",
+	"description": "Fetches completed tasks from todoist API and adds them to the Obsidian note.",
 	"author": "Andrew 'Ledary' Kulishov",
 	"authorUrl": "https://github.com/Ledaryy",
 	"isDesktopOnly": false

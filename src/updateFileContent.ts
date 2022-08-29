@@ -92,7 +92,7 @@ async function getServerData(authToken: string): Promise<string> {
 		});
 		new Notice("TCT: " + response.items.length + " completed tasks found.");
 
-		const formattedTasks = response.items.map((t) => {
+		const formattedTasks = response.items.map((t: { content: any; }) => {
 			// let date = moment(t.completed_date).format('HH:mm');
 			return `* ${t.content}`;
 			// return `* ${date}: ${t.content} -- `
@@ -100,7 +100,7 @@ async function getServerData(authToken: string): Promise<string> {
 		formattedTasks.reverse();
 		return formattedTasks.join("\n");
 	} catch (e) {
-		let errorMsg: string;
+		let errorMsg = "";
 		switch (e.httpStatusCode) {
 			case undefined:
 				errorMsg = `TCT: There was a problem pulling data from Todoist. Is your internet connection working?`;
