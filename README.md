@@ -4,6 +4,9 @@ This obsidian plugin fetches your completed tasks from Todoist and adds them to 
 
 ![](https://media0.giphy.com/media/AA77QNDGKG1SIZOHjk/giphy.gif?cid=790b761136fba1ad0e7d6dd47af2b5ead7f8dc6f641d87bc&rid=giphy.gif)
 
+# Docs
+1. [Features plan](docs/FEATURES.md)
+
 # Usage
 1. Ensure you understand the security implications (see Security section of this file)
 2. Install this plugin (Todoist Completed Tasks) through Obsidian and enable it
