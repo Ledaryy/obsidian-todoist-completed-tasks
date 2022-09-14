@@ -1,4 +1,4 @@
-import { App, Notice, Plugin, PluginSettingTab, Setting } from "obsidian";
+import { App, Notice, Plugin, PluginSettingTab, Setting, Editor } from "obsidian";
 import { updateFileFromServer } from "./src/updateFileContent";
 import { DEFAULT_SETTINGS, TodoistSettings } from "./src/DefaultSettings";
 import { migrateSettings } from "./src/settingsMigrations";
@@ -9,7 +9,7 @@ export default class TodoistCompletedTasks extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		const ribbonIconEl = this.addRibbonIcon(
+		this.addRibbonIcon(
 			"sync",
 			"Fetch today's completed todoist tasks",
 			(evt: MouseEvent) => {

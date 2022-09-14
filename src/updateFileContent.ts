@@ -1,16 +1,15 @@
-import { App, Notice } from "obsidian";
+import { App, Notice, moment, MarkdownView } from "obsidian";
 import { TodoistSettings } from "./DefaultSettings";
-import moment from "moment";
 
 export async function updateFileFromServer(
 	settings: TodoistSettings,
 	app: App
 ) {
-	const file = app.workspace.getActiveFile();
-	let fileContents = await app.vault.read(file);
+	const view = app.workspace.getActiveViewOfType(MarkdownView);
+	const editor = view.editor;
 
 	if (settings.authToken === "") {
-		new Notice("TCT: No auth token set. Please set one in the settings.");
+		new Notice("No auth token set. Please set one in the settings.");
 		return;
 	}
 
@@ -18,35 +17,33 @@ export async function updateFileFromServer(
 		settings.keywordSegmentStart === "" ||
 		settings.keywordSegmentEnd === ""
 	) {
+		new Notice("No keyword segment set. Please set one in the settings.");
+		return;
+	}
+
+	let fileContent = editor.getValue();
+	if (
+		!fileContent.contains(settings.keywordSegmentStart) ||
+		!fileContent.contains(settings.keywordSegmentEnd)
+	) {
 		new Notice(
-			"TCT: No keyword segment set. Please set one in the settings."
+			"Keyword segment not found in current file. Please set one in the settings."
 		);
 		return;
 	}
 
-	if (
-		fileContents.contains(settings.keywordSegmentStart) &&
-		fileContents.contains(settings.keywordSegmentEnd)
-	) {
-		let formattedTodos = await getServerData(settings.authToken);
-		formattedTodos = `\n` + formattedTodos + `\n`;
+	let formattedTodos = await getServerData(settings.authToken);
+	formattedTodos = `\n` + formattedTodos + `\n`;
 
-		fileContents = await app.vault.read(file);
+	let chunkForReplace = fileContent.split(settings.keywordSegmentStart)[1];
+	chunkForReplace = chunkForReplace.split(settings.keywordSegmentEnd)[0];
 
-		let chunkForReplace = fileContents.split(
-			settings.keywordSegmentStart
-		)[1];
-		chunkForReplace = chunkForReplace.split(settings.keywordSegmentEnd)[0];
+	chunkForReplace = `${settings.keywordSegmentStart}${chunkForReplace}${settings.keywordSegmentEnd}`;
+	formattedTodos = `${settings.keywordSegmentStart}${formattedTodos}${settings.keywordSegmentEnd}`;
 
-		chunkForReplace = `${settings.keywordSegmentStart}${chunkForReplace}${settings.keywordSegmentEnd}`;
-		formattedTodos = `${settings.keywordSegmentStart}${formattedTodos}${settings.keywordSegmentEnd}`;
+	const completedFile = fileContent.replace(chunkForReplace, formattedTodos);
 
-		const newData = fileContents.replace(chunkForReplace, formattedTodos);
-
-		await app.vault.modify(file, newData);
-	} else {
-		new Notice("TCT: No segment keywords found in file");
-	}
+	editor.setValue(completedFile);
 }
 
 async function getServerData(authToken: string): Promise<string> {
@@ -90,9 +87,9 @@ async function getServerData(authToken: string): Promise<string> {
 		}).then(function (response) {
 			return response.json();
 		});
-		new Notice("TCT: " + response.items.length + " completed tasks found.");
+		new Notice(response.items.length + " completed tasks found.");
 
-		const formattedTasks = response.items.map((t: { content: any; }) => {
+		const formattedTasks = response.items.map((t: { content: any }) => {
 			// let date = moment(t.completed_date).format('HH:mm');
 			return `* ${t.content}`;
 			// return `* ${date}: ${t.content} -- `
@@ -103,15 +100,15 @@ async function getServerData(authToken: string): Promise<string> {
 		let errorMsg = "";
 		switch (e.httpStatusCode) {
 			case undefined:
-				errorMsg = `TCT: There was a problem pulling data from Todoist. Is your internet connection working?`;
+				errorMsg = `There was a problem pulling data from Todoist. Is your internet connection working?`;
 				break;
 			case 403:
 				errorMsg =
-					"TCT: Authentication with todoist server failed. Check that" +
+					"Authentication with todoist server failed. Check that" +
 					" your API token is set correctly in the settings.";
 				break;
 			default:
-				`TCT: There was a problem pulling data from Todoist. ${e.responseData}`;
+				`There was a problem pulling data from Todoist. ${e.responseData}`;
 		}
 		console.log(errorMsg, e);
 		new Notice(errorMsg);
