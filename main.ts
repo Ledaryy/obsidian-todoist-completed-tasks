@@ -11,17 +11,16 @@ export default class TodoistCompletedTasks extends Plugin {
 
 		const ribbonIconEl = this.addRibbonIcon(
 			"sync",
-			"TCT: Fetch completed tasks",
+			"Fetch today's completed todoist tasks",
 			(evt: MouseEvent) => {
 				new Notice("Loading tasks...");
 				updateFileFromServer(this.settings, this.app);
 			}
 		);
-		ribbonIconEl.addClass("my-plugin-ribbon-class");
 
 		this.addCommand({
 			id: "todoist-fetch-completed-tasks",
-			name: "Fetch completed tasks",
+			name: "Fetch today's completed todoist tasks",
 			callback: async () => {
 				new Notice("Loading tasks...");
 				updateFileFromServer(this.settings, this.app);
@@ -30,8 +29,6 @@ export default class TodoistCompletedTasks extends Plugin {
 
 		this.addSettingTab(new TodoistPluginSettingTab(this.app, this));
 	}
-
-	onunload() {}
 
 	async loadSettings() {
 		let storedSettings = (await this.loadData()) ?? DEFAULT_SETTINGS;

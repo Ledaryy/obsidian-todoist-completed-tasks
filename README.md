@@ -6,7 +6,8 @@ This obsidian plugin fetches your completed tasks from Todoist and adds them to 
 
 # Usage
 1. Ensure you understand the security implications (see Security section of this file)
-2. Install this plugin (Todoist Text) through Obsidian and enable it
+2. Install this plugin (Todoist Completed Tasks) through Obsidian and enable it
+   - (It is not yet available on the Obsidian plugin store, so you will need to download the zip file from the releases page and install it manually or through the BRAT plugin)
 3. Enter your Todoist API token in the plugin settings, as explained there
 4. Read below sections to learn how to manipulate tasks
 
