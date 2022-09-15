@@ -27,7 +27,7 @@ export async function updateFileFromServer(
 		!fileContent.contains(settings.keywordSegmentEnd)
 	) {
 		new Notice(
-			"Keyword segment not found in current file. Please set one in the settings."
+			`Keyword segment not found in current file. Please add '${settings.keywordSegmentStart}' and '${settings.keywordSegmentEnd}' to the file.`
 		);
 		return;
 	}
