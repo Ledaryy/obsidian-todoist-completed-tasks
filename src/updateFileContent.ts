@@ -36,17 +36,18 @@ export async function updateFileFromServer(
 		settings.authToken,
 		settings.taskPrefix
 	);
+
 	formattedTodos = `\n` + formattedTodos + `\n`;
+	formattedTodos = `${settings.keywordSegmentStart}${formattedTodos}`;
 
-	let chunkForReplace = fileContent.split(settings.keywordSegmentStart)[1];
-	chunkForReplace = chunkForReplace.split(settings.keywordSegmentEnd)[0];
+	const rangeStart = fileContent.indexOf(settings.keywordSegmentStart);
+	const rangeEnd = fileContent.indexOf(settings.keywordSegmentEnd);
 
-	chunkForReplace = `${settings.keywordSegmentStart}${chunkForReplace}${settings.keywordSegmentEnd}`;
-	formattedTodos = `${settings.keywordSegmentStart}${formattedTodos}${settings.keywordSegmentEnd}`;
-
-	const completedFile = fileContent.replace(chunkForReplace, formattedTodos);
-
-	editor.setValue(completedFile);
+	editor.replaceRange(
+		formattedTodos,
+		editor.offsetToPos(rangeStart),
+		editor.offsetToPos(rangeEnd)
+	);
 }
 
 async function getServerData(
