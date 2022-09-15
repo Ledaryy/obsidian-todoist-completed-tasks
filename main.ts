@@ -62,11 +62,12 @@ class TodoistPluginSettingTab extends PluginSettingTab {
 		this.addApiKeySetting(containerEl);
 		this.addStartLineDetector(containerEl);
 		this.addEndLineDetector(containerEl);
+		this.addTaskPrefix(containerEl);
 	}
 
 	private addApiKeySetting(containerEl: HTMLElement) {
-		const tokenDescription = document.createDocumentFragment();
-		tokenDescription.createEl("span", null, (span) => {
+		const fieldDescription = document.createDocumentFragment();
+		fieldDescription.createEl("span", null, (span) => {
 			span.innerText =
 				"This is your personal authentication token for Todoist. Be aware that anyone with this token " +
 				"could access all of your Todoist data. This is stored in plain text in your .obsidian/plugins folder." +
@@ -80,7 +81,7 @@ class TodoistPluginSettingTab extends PluginSettingTab {
 		});
 		new Setting(containerEl)
 			.setName("API token")
-			.setDesc(tokenDescription)
+			.setDesc(fieldDescription)
 			.addText((text) =>
 				text
 					.setValue(this.plugin.settings.authToken)
@@ -91,13 +92,13 @@ class TodoistPluginSettingTab extends PluginSettingTab {
 			);
 	}
 	private addStartLineDetector(containerEl: HTMLElement) {
-		const tokenDescription = document.createDocumentFragment();
-		tokenDescription.createEl("span", null, (span) => {
-			span.innerText = "This one is for plugin to detect start of tasks.";
+		const fieldDescription = document.createDocumentFragment();
+		fieldDescription.createEl("span", null, (span) => {
+			span.innerText = "Segment for the plugin to detect the start of tasks. Supports Obsidian's comments syntax.";
 		});
 		new Setting(containerEl)
 			.setName("Start line detector")
-			.setDesc(tokenDescription)
+			.setDesc(fieldDescription)
 			.addText((text) =>
 				text
 					.setValue(this.plugin.settings.keywordSegmentStart)
@@ -108,18 +109,35 @@ class TodoistPluginSettingTab extends PluginSettingTab {
 			);
 	}
 	private addEndLineDetector(containerEl: HTMLElement) {
-		const tokenDescription = document.createDocumentFragment();
-		tokenDescription.createEl("span", null, (span) => {
-			span.innerText = "This one is for plugin to detect end of tasks.";
+		const fieldDescription = document.createDocumentFragment();
+		fieldDescription.createEl("span", null, (span) => {
+			span.innerText = "Segment for the plugin to detect the end of tasks. Supports Obsidian's comments syntax.";
 		});
 		new Setting(containerEl)
 			.setName("End line detector")
-			.setDesc(tokenDescription)
+			.setDesc(fieldDescription)
 			.addText((text) =>
 				text
 					.setValue(this.plugin.settings.keywordSegmentEnd)
 					.onChange(async (value) => {
 						this.plugin.settings.keywordSegmentEnd = value;
+						await this.plugin.saveSettings();
+					})
+			);
+	}
+	private addTaskPrefix(containerEl: HTMLElement) {
+		const fieldDescription = document.createDocumentFragment();
+		fieldDescription.createEl("span", null, (span) => {
+			span.innerText = "Set prefix for tasks. Supports bullet points '*', checkboxes '- [x]' and '- [ ]', etc. It also supports the special parameter '$AUTOINCREMENT' which will be replaced with an auto-increment number.";
+		});
+		new Setting(containerEl)
+			.setName("Prefix")
+			.setDesc(fieldDescription)
+			.addText((text) =>
+				text
+					.setValue(this.plugin.settings.taskPrefix)
+					.onChange(async (value) => {
+						this.plugin.settings.taskPrefix = value;
 						await this.plugin.saveSettings();
 					})
 			);

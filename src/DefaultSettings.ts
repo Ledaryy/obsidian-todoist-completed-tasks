@@ -3,11 +3,13 @@ export interface TodoistSettings {
 	keywordSegmentStart: string;
 	keywordSegmentEnd: string;
 	authToken: string;
+	taskPrefix: string;
 };
 
 export const DEFAULT_SETTINGS: TodoistSettings = {
-	settingsVersion: 1,
-	keywordSegmentStart: "$startOfSegmentForCompletedTasks",
-	keywordSegmentEnd: "$endOfSegmentForCompletedTasks",
+	settingsVersion: 2,
+	keywordSegmentStart: "%% COMPLETED_TODOIST_TASKS_START %%",
+	keywordSegmentEnd: "%% COMPLETED_TODOIST_TASKS_END %%",
 	authToken: "",
+	taskPrefix: "*"
 };

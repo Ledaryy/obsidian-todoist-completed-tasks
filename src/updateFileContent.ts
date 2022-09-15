@@ -32,7 +32,7 @@ export async function updateFileFromServer(
 		return;
 	}
 
-	let formattedTodos = await getServerData(settings.authToken);
+	let formattedTodos = await getServerData(settings.authToken, settings.taskPrefix);
 	formattedTodos = `\n` + formattedTodos + `\n`;
 
 	let chunkForReplace = fileContent.split(settings.keywordSegmentStart)[1];
@@ -46,7 +46,7 @@ export async function updateFileFromServer(
 	editor.setValue(completedFile);
 }
 
-async function getServerData(authToken: string): Promise<string> {
+async function getServerData(authToken: string, taskPrefix: string): Promise<string> {
 	const timeInput = moment(new Date()).format("YYYY-MM-DD");
 	const currentTime = new Date();
 	const timeStartUTC = new Date(Date.parse(timeInput + "T00:00:00Z"));
@@ -88,13 +88,17 @@ async function getServerData(authToken: string): Promise<string> {
 			return response.json();
 		});
 		new Notice(response.items.length + " completed tasks found.");
-
-		const formattedTasks = response.items.map((t: { content: any }) => {
+		
+		const formattedTasks = response.items.reverse().map((t: { content: any }, index: number) => {
 			// let date = moment(t.completed_date).format('HH:mm');
-			return `* ${t.content}`;
+			if (taskPrefix === "$AUTOINCREMENT") {
+				return `${index + 1}. ${t.content}`;
+			} else {
+			return `${taskPrefix} ${t.content}`;
+			}
 			// return `* ${date}: ${t.content} -- `
 		});
-		formattedTasks.reverse();
+		// formattedTasks.reverse();
 		return formattedTasks.join("\n");
 	} catch (e) {
 		let errorMsg = "";
