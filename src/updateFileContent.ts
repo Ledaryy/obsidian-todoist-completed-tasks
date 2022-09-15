@@ -32,7 +32,10 @@ export async function updateFileFromServer(
 		return;
 	}
 
-	let formattedTodos = await getServerData(settings.authToken, settings.taskPrefix);
+	let formattedTodos = await getServerData(
+		settings.authToken,
+		settings.taskPrefix
+	);
 	formattedTodos = `\n` + formattedTodos + `\n`;
 
 	let chunkForReplace = fileContent.split(settings.keywordSegmentStart)[1];
@@ -46,25 +49,30 @@ export async function updateFileFromServer(
 	editor.setValue(completedFile);
 }
 
-async function getServerData(authToken: string, taskPrefix: string): Promise<string> {
-	const timeInput = moment(new Date()).format("YYYY-MM-DD");
-	const currentTime = new Date();
-	const timeStartUTC = new Date(Date.parse(timeInput + "T00:00:00Z"));
+async function getServerData(
+	authToken: string,
+	taskPrefix: string
+): Promise<string> {
+	let currentTime = new Date();
+	currentTime.setHours(0, 0, 0, 0);
 
-	const timeStartWithOffset = new Date(
-		timeStartUTC.getTime() + currentTime.getTimezoneOffset() * 60 * 1000
+	const taskStartInServerTime =
+		currentTime.getTime() + currentTime.getTimezoneOffset() * 60 * 1000;
+	const timeStartFormattedDate = moment(taskStartInServerTime).format(
+		"YYYY-MM-DD"
 	);
-	const timeStartFormattedDate =
-		moment(timeStartWithOffset).format("YYYY-MM-DD");
-	const timeStartFormattedTime = moment(timeStartWithOffset).format("HH:mm");
-
-	const timeEndUTC = new Date(
-		timeStartWithOffset.getTime() + 24 * 60 * 60 * 1000
+	const timeStartFormattedTime = moment(taskStartInServerTime).format(
+		"HH:mm"
 	);
-	const timeEndFormattedDate = moment(timeEndUTC).format("YYYY-MM-DD");
-	const timeEndFormattedTime = moment(timeEndUTC).format("HH:mm");
 
-	// console.log(timeInput)
+	const taskEndInServerTime =
+		currentTime.getTime() +
+		currentTime.getTimezoneOffset() * 60 * 1000 +
+		24 * 60 * 60 * 1000;
+	const timeEndFormattedDate =
+		moment(taskEndInServerTime).format("YYYY-MM-DD");
+	const timeEndFormattedTime = moment(taskEndInServerTime).format("HH:mm");
+
 	// console.log(timeStartFormattedDate);
 	// console.log(timeStartFormattedTime);
 	// console.log(timeEndFormattedDate);
@@ -88,16 +96,17 @@ async function getServerData(authToken: string, taskPrefix: string): Promise<str
 			return response.json();
 		});
 		new Notice(response.items.length + " completed tasks found.");
-		
-		const formattedTasks = response.items.reverse().map((t: { content: any }, index: number) => {
-			// let date = moment(t.completed_date).format('HH:mm');
-			if (taskPrefix === "$AUTOINCREMENT") {
-				return `${index + 1}. ${t.content}`;
-			} else {
-			return `${taskPrefix} ${t.content}`;
-			}
-			// return `* ${date}: ${t.content} -- `
-		});
+		const formattedTasks = response.items
+			.reverse()
+			.map((t: { content: any }, index: number) => {
+				// let date = moment(t.completed_date).format('HH:mm');
+				if (taskPrefix === "$AUTOINCREMENT") {
+					return `${index + 1}. ${t.content}`;
+				} else {
+					return `${taskPrefix} ${t.content}`;
+				}
+				// return `* ${date}: ${t.content} -- `
+			});
 		// formattedTasks.reverse();
 		return formattedTasks.join("\n");
 	} catch (e) {
