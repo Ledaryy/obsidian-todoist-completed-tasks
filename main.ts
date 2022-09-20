@@ -1,4 +1,4 @@
-import { App, Notice, Plugin, PluginSettingTab, Setting, Editor } from "obsidian";
+import { App, Notice, Plugin, PluginSettingTab, Setting } from "obsidian";
 import { updateFileFromServer } from "./src/updateFileContent";
 import { DEFAULT_SETTINGS, TodoistSettings } from "./src/DefaultSettings";
 import { migrateSettings } from "./src/settingsMigrations";
@@ -13,7 +13,7 @@ export default class TodoistCompletedTasks extends Plugin {
 			"sync",
 			"Fetch today's completed todoist tasks",
 			(evt: MouseEvent) => {
-				new Notice("Loading tasks...");
+				new Notice("Fetching completed tasks..");
 				updateFileFromServer(this.settings, this.app);
 			}
 		);
@@ -22,7 +22,7 @@ export default class TodoistCompletedTasks extends Plugin {
 			id: "todoist-fetch-completed-tasks",
 			name: "Fetch today's completed todoist tasks",
 			callback: async () => {
-				new Notice("Loading tasks...");
+				new Notice("Fetching completed tasks..");
 				updateFileFromServer(this.settings, this.app);
 			},
 		});
@@ -94,7 +94,8 @@ class TodoistPluginSettingTab extends PluginSettingTab {
 	private addStartLineDetector(containerEl: HTMLElement) {
 		const fieldDescription = document.createDocumentFragment();
 		fieldDescription.createEl("span", null, (span) => {
-			span.innerText = "Segment for the plugin to detect the start of tasks. Supports Obsidian's comments syntax.";
+			span.innerText =
+				"Segment for the plugin to detect the start of tasks. Supports Obsidian's comments syntax.";
 		});
 		new Setting(containerEl)
 			.setName("Start line detector")
@@ -111,7 +112,8 @@ class TodoistPluginSettingTab extends PluginSettingTab {
 	private addEndLineDetector(containerEl: HTMLElement) {
 		const fieldDescription = document.createDocumentFragment();
 		fieldDescription.createEl("span", null, (span) => {
-			span.innerText = "Segment for the plugin to detect the end of tasks. Supports Obsidian's comments syntax.";
+			span.innerText =
+				"Segment for the plugin to detect the end of tasks. Supports Obsidian's comments syntax.";
 		});
 		new Setting(containerEl)
 			.setName("End line detector")
@@ -128,7 +130,8 @@ class TodoistPluginSettingTab extends PluginSettingTab {
 	private addTaskPrefix(containerEl: HTMLElement) {
 		const fieldDescription = document.createDocumentFragment();
 		fieldDescription.createEl("span", null, (span) => {
-			span.innerText = "Set prefix for tasks. Supports bullet points '*', checkboxes '- [x]' and '- [ ]', etc. It also supports the special parameter '$AUTOINCREMENT' which will be replaced with an auto-increment number.";
+			span.innerText =
+				"Set prefix for tasks. Supports bullet points '*', checkboxes '- [x]' and '- [ ]', etc. It also supports the special parameter '$AUTOINCREMENT' which will be replaced with an auto-increment number.";
 		});
 		new Setting(containerEl)
 			.setName("Prefix")

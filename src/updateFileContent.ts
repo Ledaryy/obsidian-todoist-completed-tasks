@@ -48,6 +48,8 @@ export async function updateFileFromServer(
 		editor.offsetToPos(rangeStart),
 		editor.offsetToPos(rangeEnd)
 	);
+
+	new Notice("Completed tasks loaded.");
 }
 
 async function getServerData(
@@ -89,26 +91,86 @@ async function getServerData(
 			timeEndFormattedDate +
 			`T` +
 			timeEndFormattedTime;
-		const response = await fetch(url, {
+		const completedTasksMetadata = await fetch(url, {
 			headers: {
 				Authorization: `Bearer ${authToken}`,
 			},
 		}).then(function (response) {
 			return response.json();
 		});
-		new Notice(response.items.length + " completed tasks found.");
-		const formattedTasks = response.items
-			.reverse()
-			.map((t: { content: any }, index: number) => {
-				// let date = moment(t.completed_date).format('HH:mm');
-				if (taskPrefix === "$AUTOINCREMENT") {
-					return `${index + 1}. ${t.content}`;
-				} else {
-					return `${taskPrefix} ${t.content}`;
-				}
-				// return `* ${date}: ${t.content} -- `
-			});
-		// formattedTasks.reverse();
+
+		new Notice(
+			completedTasksMetadata.items.length +
+				" completed tasks found. Processing..."
+		);
+
+		const CompletedTasksPromises = completedTasksMetadata.items.map(
+			async (task: { task_id: number }) => {
+				const url = `https://api.todoist.com/sync/v8/items/get?item_id=${task.task_id}`;
+				let completedTasks = await fetch(url, {
+					headers: {
+						Authorization: `Bearer ${authToken}`,
+					},
+				});
+				const data = await completedTasks.json();
+				return data;
+			}
+		);
+
+		const completedTasks = await Promise.all(CompletedTasksPromises);
+
+		const parsedTodos = completedTasks.map((task: any) => {
+			return {
+				content: task.item.content,
+				dateCompleted: task.item.date_completed,
+				description: task.item.description,
+				parentId: task.item.parent_id,
+				taskId: task.item.id,
+				childTasks: [],
+			};
+		});
+
+		let childTasks = parsedTodos.filter(
+			(task: any) => task.parentId !== null
+		);
+
+		parsedTodos.forEach((task: any) => {
+			if (task.parentId !== null) {
+				const parentTask = parsedTodos.find(
+					(t: any) => t.taskId === task.parentId
+				);
+				parentTask.childTasks.push(task);
+			}
+		});
+
+		childTasks.forEach((task: any) => {
+			const index = parsedTodos.indexOf(task);
+			parsedTodos.splice(index, 1);
+		});
+
+		const formattedTasks = parsedTodos.map((t: any, index: number) => {
+			let returnString = "";
+
+			if (taskPrefix === "$AUTOINCREMENT") {
+				returnString = `${index + 1}. ${t.content}`;
+			} else {
+				returnString = `${taskPrefix} ${t.content}`;
+			}
+			if (t.childTasks.length > 0) {
+				const childTasks = t.childTasks.map(
+					(childTask: any, index: number) => {
+						if (taskPrefix === "$AUTOINCREMENT") {
+							return `    ${index + 1}. ${childTask.content}`;
+						} else {
+							return `    ${taskPrefix} ${childTask.content}`;
+						}
+					}
+				);
+				returnString += "\n" + childTasks.join("\n");
+			}
+			return returnString;
+		});
+
 		return formattedTasks.join("\n");
 	} catch (e) {
 		let errorMsg = "";
