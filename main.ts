@@ -2,6 +2,8 @@ import { App, Notice, Plugin, PluginSettingTab, Setting } from "obsidian";
 import { updateFileFromServer } from "./src/updateFileContent";
 import { DEFAULT_SETTINGS, TodoistSettings } from "./src/DefaultSettings";
 import { migrateSettings } from "./src/settingsMigrations";
+import { ExampleModal } from "./src/modal";
+import { getTimeframesForLastNHoursWithoutOffset } from "./src/utils";
 
 export default class TodoistCompletedTasks extends Plugin {
 	settings: TodoistSettings;
@@ -14,7 +16,7 @@ export default class TodoistCompletedTasks extends Plugin {
 			"Fetch today's completed todoist tasks",
 			(evt: MouseEvent) => {
 				new Notice("Fetching completed tasks..");
-				updateFileFromServer(this.settings, this.app);
+				updateFileFromServer(this.settings, this.app, 0);
 			}
 		);
 
@@ -23,7 +25,48 @@ export default class TodoistCompletedTasks extends Plugin {
 			name: "Fetch today's completed todoist tasks",
 			callback: async () => {
 				new Notice("Fetching completed tasks..");
-				updateFileFromServer(this.settings, this.app);
+				updateFileFromServer(this.settings, this.app, 0);
+			},
+		});
+
+		this.addCommand({
+			id: "todoist-fetch-completed-tasks-for-last-n-hours",
+			name: "Fetch completed todoist tasks for last n hours",
+			callback: async () => {
+				new ExampleModal(this.app, (result) => {
+					if (
+						result == null ||
+						result == "" ||
+						isNaN(Number(result)) ||
+						Number(result) < 0
+					) {
+						new Notice("Please enter a valid number of hours");
+						return;
+					}
+
+					let times = getTimeframesForLastNHoursWithoutOffset(
+						Number(result)
+					);
+					const {
+						timeStartFormattedDate,
+						timeStartFormattedTime,
+						timeEndFormattedDate,
+						timeEndFormattedTime,
+					} = times;
+
+					new Notice(
+						`Fetching completed tasks for last ${result} hours.. ` +
+							`\nTimerange, from: \n${timeStartFormattedDate} ${timeStartFormattedTime} \n` +
+							`to: \n${timeEndFormattedDate} ${timeEndFormattedTime}. \nMessage will ` +
+							`be removed after 30 sec.`,
+						30000
+					);
+					updateFileFromServer(
+						this.settings,
+						this.app,
+						Number(result)
+					);
+				}).open();
 			},
 		});
 
