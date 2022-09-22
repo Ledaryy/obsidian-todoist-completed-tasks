@@ -2,7 +2,8 @@ import { Notice } from "obsidian";
 
 export async function fetchTasks(
 	authToken: string,
-	timeFrames: any
+	timeFrames: any,
+	renderSubtasks: boolean
 ): Promise<any> {
 	const {
 		timeStartFormattedDate,
@@ -10,6 +11,8 @@ export async function fetchTasks(
 		timeEndFormattedDate,
 		timeEndFormattedTime,
 	} = timeFrames;
+
+	const limit = renderSubtasks ? 30 : 200;
 
 	try {
 		const url =
@@ -21,7 +24,7 @@ export async function fetchTasks(
 			timeEndFormattedDate +
 			`T` +
 			timeEndFormattedTime +
-			`&limit=200`;
+			`&limit=${limit}`;
 		const completedTasksMetadata = await fetch(url, {
 			headers: {
 				Authorization: `Bearer ${authToken}`,
@@ -29,37 +32,48 @@ export async function fetchTasks(
 		}).then(function (response) {
 			return response.json();
 		});
-
 		new Notice(
 			completedTasksMetadata.items.length +
 				" completed tasks found. Processing..."
 		);
 
-		const CompletedTasksPromises = completedTasksMetadata.items.map(
-			async (task: { task_id: number }) => {
-				const url = `https://api.todoist.com/sync/v8/items/get?item_id=${task.task_id}`;
-				let completedTasks = await fetch(url, {
-					headers: {
-						Authorization: `Bearer ${authToken}`,
-					},
-				});
-				const data = await completedTasks.json();
-				return data;
-			}
-		);
-
-		const completedTasks = await Promise.all(CompletedTasksPromises);
-
-		const parsedTodos = completedTasks.map((task: any) => {
-			return {
-				content: task.item.content,
-				dateCompleted: task.item.date_completed,
-				description: task.item.description,
-				parentId: task.item.parent_id,
-				taskId: task.item.id,
-				childTasks: [],
-			};
-		});
+		let parsedTodos = {};
+		if (renderSubtasks) {
+			const CompletedTasksPromises = completedTasksMetadata.items.map(
+				async (task: { task_id: number }) => {
+					const url = `https://api.todoist.com/sync/v8/items/get?item_id=${task.task_id}`;
+					let completedTasks = await fetch(url, {
+						headers: {
+							Authorization: `Bearer ${authToken}`,
+						},
+					});
+					const data = await completedTasks.json();
+					return data;
+				}
+			);
+			const completedTasks = await Promise.all(CompletedTasksPromises);
+			parsedTodos = completedTasks.map((task: any) => {
+				return {
+					content: task.item.content,
+					dateCompleted: task.item.date_completed,
+					description: task.item.description,
+					parentId: task.item.parent_id,
+					taskId: task.item.id,
+					childTasks: [],
+				};
+			});
+		} else {
+			parsedTodos = completedTasksMetadata.items.map((task: any) => {
+				return {
+					content: task.content,
+					dateCompleted: task.completed_date,
+					description: "",
+					parentId: null as null,
+					taskId: task.task_id,
+					childTasks: "",
+				};
+			});
+		}
 
 		return parsedTodos;
 	} catch (e) {
