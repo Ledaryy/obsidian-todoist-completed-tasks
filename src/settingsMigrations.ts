@@ -1,4 +1,4 @@
-import { TodoistSettings, DEFAULT_SETTINGS } from "./defaultSettings";
+import { TodoistSettings, DEFAULT_SETTINGS } from "./DefaultSettings";
 
 export function migrateSettings(settings: any): TodoistSettings {
 	let newSettings: any = settings;
