@@ -32,6 +32,12 @@ export async function fetchTasks(
 		}).then(function (response) {
 			return response.json();
 		});
+
+		if (completedTasksMetadata.items.length === 0) {
+			new Notice("No completed tasks found for the given timeframe");
+			return "";
+		}
+
 		new Notice(
 			completedTasksMetadata.items.length +
 				" completed tasks found. Processing..."

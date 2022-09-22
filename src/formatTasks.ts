@@ -1,11 +1,12 @@
 import { Notice } from "obsidian";
-import { TodoistSettings } from "./defaultSettings";
+import { TodoistSettings } from "./DefaultSettings";
 
 export function formatTasks(tasks: any, settings: TodoistSettings) {
 	try {
 		const taskPrefix = settings.taskPrefix;
 
 		let childTasks = tasks.filter((task: any) => task.parentId !== null);
+		let makeSubtaskErrorNotice = false;
 
 		if (childTasks.length > 0) {
 			tasks.forEach((task: any) => {
@@ -13,7 +14,12 @@ export function formatTasks(tasks: any, settings: TodoistSettings) {
 					const parentTask = tasks.find(
 						(t: any) => t.taskId === task.parentId
 					);
-					parentTask.childTasks.push(task);
+					if (parentTask) {
+						parentTask.childTasks.push(task);
+					} else {
+						console.log("Parent task not found for: ", task);
+						makeSubtaskErrorNotice = true;
+					}
 				}
 			});
 
@@ -46,11 +52,25 @@ export function formatTasks(tasks: any, settings: TodoistSettings) {
 			return returnString;
 		});
 
+		if (makeSubtaskErrorNotice) {
+			new Notice(
+				"Some subtasks were not rendered because parent tasks were not found." +
+					"\nPlease check the console for more information." +
+					"\nMessage will be removed after 10 sec.",
+				10000
+			);
+			console.log(
+				"Please note that to render completed subtasks, the parent task must also be completed."
+			);
+		}
+
 		return formattedTasks.join("\n");
 	} catch (error) {
 		console.log(error);
 		new Notice(
-			"There was a problem formatting your tasks. Check the console for more details."
+			"There was a problem formatting your tasks. Check the console for more details.",
+			10000
 		);
+		return "";
 	}
 }

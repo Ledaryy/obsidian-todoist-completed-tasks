@@ -125,7 +125,8 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
 				"You should disable it if you want to load more than 30 (up to 200) tasks. " +
 				"This is due to a limitation of the Todoist API." +
 				"\nIf enabled, subtasks will be rendered as subtasks. " +
-				"\nIf disabled, subtasks will be rendered as normal tasks.";
+				"\nIf disabled, subtasks will be rendered as normal tasks." +
+				"\nDramatically increases loading time if enabled.";
 		});
 		new Setting(containerEl)
 			.setName("Render subtasks")

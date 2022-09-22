@@ -1,6 +1,6 @@
 import { Notice, Plugin } from "obsidian";
 import { updateFileFromServer } from "./src/updateFileContent";
-import { DEFAULT_SETTINGS, TodoistSettings } from "./src/defaultSettings";
+import { DEFAULT_SETTINGS, TodoistSettings } from "./src/DefaultSettings";
 import { migrateSettings } from "./src/settingsMigrations";
 import { ExampleModal } from "./src/modal";
 import { getTimeframesForLastNHoursWithoutOffset } from "./src/utils";
