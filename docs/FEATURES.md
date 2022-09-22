@@ -9,3 +9,5 @@
   - This is not always correct. And is not tested on different timezones
 - [x] Fetch completed tasks for >1 day.
   - Currently, the plugin fetches only tasks completed today from 00:00 to 23:59
+- [ ] Show task completed datetime/description
+  - Currently, the plugin only shows the task name
