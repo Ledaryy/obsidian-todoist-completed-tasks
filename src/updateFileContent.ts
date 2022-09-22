@@ -1,5 +1,5 @@
 import { App, Notice, MarkdownView } from "obsidian";
-import { TodoistSettings } from "./defaultSettings";
+import { TodoistSettings } from "./DefaultSettings";
 import { fetchTasks } from "./fetchTasks";
 import { formatTasks } from "./formatTasks";
 import {
@@ -55,6 +55,10 @@ export async function updateFileFromServer(
 		timeFrames,
 		settings.renderSubtasks
 	);
+
+	if (rawTasks.length === 0) {
+		return;
+	}
 
 	let formattedTasks = formatTasks(rawTasks, settings);
 
