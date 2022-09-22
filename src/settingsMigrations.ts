@@ -1,4 +1,4 @@
-import { TodoistSettings, DEFAULT_SETTINGS } from "./DefaultSettings";
+import { TodoistSettings, DEFAULT_SETTINGS } from "./defaultSettings";
 
 export function migrateSettings(settings: any): TodoistSettings {
 	let newSettings: any = settings;
@@ -7,6 +7,9 @@ export function migrateSettings(settings: any): TodoistSettings {
 	}
 	if (getSettingsVersion(newSettings) == 1) {
 		newSettings = migrateToV2(newSettings as TodoistSettingsV1);
+	}
+	if (getSettingsVersion(newSettings) == 2) {
+		newSettings = migrateToV3(newSettings as TodoistSettingsV2);
 	}
 
 	return newSettings;
@@ -26,13 +29,24 @@ function migrateToV1(settings: TodoistSettingV0): TodoistSettingsV1 {
 	};
 }
 
-function migrateToV2(settings: TodoistSettingsV1): TodoistSettings {
+function migrateToV2(settings: TodoistSettingsV1): TodoistSettingsV2 {
 	return {
 		settingsVersion: 2,
 		keywordSegmentStart: settings.keywordSegmentStart,
 		keywordSegmentEnd: settings.keywordSegmentEnd,
 		authToken: settings.authToken,
 		taskPrefix: DEFAULT_SETTINGS.taskPrefix,
+	};
+}
+
+function migrateToV3(settings: TodoistSettingsV2): TodoistSettings {
+	return {
+		settingsVersion: 3,
+		keywordSegmentStart: settings.keywordSegmentStart,
+		keywordSegmentEnd: settings.keywordSegmentEnd,
+		authToken: settings.authToken,
+		taskPrefix: settings.taskPrefix,
+		renderSubtasks: DEFAULT_SETTINGS.renderSubtasks,
 	};
 }
 
@@ -45,4 +59,12 @@ interface TodoistSettingsV1 {
 	keywordSegmentStart: string;
 	keywordSegmentEnd: string;
 	authToken: string;
-};
+}
+
+interface TodoistSettingsV2 {
+	settingsVersion: number;
+	keywordSegmentStart: string;
+	keywordSegmentEnd: string;
+	authToken: string;
+	taskPrefix: string;
+}
