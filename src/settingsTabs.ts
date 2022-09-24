@@ -122,7 +122,7 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
 		const fieldDescription = document.createDocumentFragment();
 		fieldDescription.createEl("span", null, (span) => {
 			span.innerText =
-				"You should disable it if you want to load more than 30 (up to 200) tasks. " +
+				"You should disable this if you want to load more than 30 (up to 200) tasks. " +
 				"This is due to a limitation of the Todoist API." +
 				"\nIf enabled, subtasks will be rendered as subtasks. " +
 				"\nIf disabled, subtasks will be rendered as normal tasks." +

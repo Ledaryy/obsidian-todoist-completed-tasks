@@ -2,7 +2,7 @@
 
 This obsidian plugin fetches your completed tasks from Todoist and adds them to your obsidian note.
 
-![demo](https://github.com/Ledaryy/obsidian-todoist-completed-tasks/blob/master/static/gif/plugin_preview.gif)
+![demo](https://github.com/Ledaryy/obsidian-todoist-completed-tasks/blob/master/static/gif/plugin_preview_v1.1.0)
 
 # Docs
 1. [Features plan](https://github.com/Ledaryy/obsidian-todoist-completed-tasks/blob/master/docs/FEATURES.md)
@@ -18,8 +18,8 @@ This obsidian plugin fetches your completed tasks from Todoist and adds them to 
    - **End segment** is a line with `%% COMPLETED_TODOIST_TASKS_END %%`
 4. Run the plugin
    - By clicking the 🔄 button in the left sidebar
-   - By executing `(Ctrl+P > Todoist Completed Tasks: Fetch completed tasks)`
-5. Done!
+   - By executing `(Ctrl+P > Todoist Completed Tasks: Fetch today's completed Todoist tasks)`
+5. Done! Also check out the [tricks and tips](https://github.com/Ledaryy/obsidian-todoist-completed-tasks/blob/master/docs/ADVANCED.md) for advanced usage of the plugin. It has many cool features!
 
 ## Attribution
 This plugin is heavily influenced by the [Todoist Text](https://github.com/wesmoncrief/obsidian-todoist-text) plugin.
