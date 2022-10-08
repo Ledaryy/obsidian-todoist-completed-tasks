@@ -5,48 +5,39 @@ import { formatTasks } from "./formatTasks";
 import {
 	getTimeframesForUsersToday,
 	getTimeframesForLastNHours,
+	getTimeFromKeySegments,
+	settingsCheck,
+	segmentsCheck,
 } from "./utils";
 
 export async function updateFileFromServer(
 	settings: TodoistSettings,
 	app: App,
-	time: number
+	time: number,
+	useTimeFromKeySegment: boolean
 ) {
-	const view = app.workspace.getActiveViewOfType(MarkdownView);
-	const editor = view.editor;
-
-	if (settings.authToken === "") {
-		new Notice("No auth token set. Please set one in the settings.");
-		return;
-	}
+	const editor = app.workspace.getActiveViewOfType(MarkdownView).editor;
+	const fileContent = editor.getValue();
 
 	if (
-		settings.keywordSegmentStart === "" ||
-		settings.keywordSegmentEnd === ""
+		!settingsCheck(settings) ||
+		!segmentsCheck(fileContent, settings, useTimeFromKeySegment)
 	) {
-		new Notice("No keyword segment set. Please set one in the settings.");
 		return;
 	}
 
-	let fileContent = editor.getValue();
-	if (
-		!fileContent.contains(settings.keywordSegmentStart) ||
-		!fileContent.contains(settings.keywordSegmentEnd)
-	) {
-		new Notice(
-			`Keyword segment not found in current file. Please add '${settings.keywordSegmentStart}' and '${settings.keywordSegmentEnd}' to the file.`
-		);
-		return;
-	}
+	let timeFrames = null;
 
-	let timeFrames = {};
-
-	if (time === 0) {
+	if (useTimeFromKeySegment) {
+		timeFrames = getTimeFromKeySegments(fileContent);
+	} else if (time === 0) {
 		timeFrames = getTimeframesForUsersToday();
 	} else if (time > 0) {
 		timeFrames = getTimeframesForLastNHours(time);
-	} else {
-		new Notice("Invalid time frame.");
+	}
+
+	if (timeFrames === null) {
+		new Notice("Invalid time frame.", 10000);
 		return;
 	}
 
@@ -63,10 +54,17 @@ export async function updateFileFromServer(
 	let formattedTasks = formatTasks(rawTasks, settings);
 
 	formattedTasks = `\n` + formattedTasks + `\n`;
-	formattedTasks = `${settings.keywordSegmentStart}${formattedTasks}`;
 
-	const rangeStart = fileContent.indexOf(settings.keywordSegmentStart);
-	const rangeEnd = fileContent.indexOf(settings.keywordSegmentEnd);
+	let rangeStart = fileContent.indexOf(settings.keywordSegmentStart);
+	let rangeEnd = fileContent.indexOf(settings.keywordSegmentEnd);
+
+	if (useTimeFromKeySegment) {
+		rangeStart = fileContent.indexOf(timeFrames.startString);
+		rangeEnd = fileContent.indexOf(timeFrames.endString);
+		formattedTasks = `${timeFrames.startString}${formattedTasks}`;
+	} else {
+		formattedTasks = `${settings.keywordSegmentStart}${formattedTasks}`;
+	}
 
 	editor.replaceRange(
 		formattedTasks,

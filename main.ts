@@ -17,7 +17,7 @@ export default class TodoistCompletedTasks extends Plugin {
 			"Fetch today's completed Todoist tasks",
 			(evt: MouseEvent) => {
 				new Notice("Fetching completed tasks..");
-				updateFileFromServer(this.settings, this.app, 0);
+				updateFileFromServer(this.settings, this.app, 0, false);
 			}
 		);
 
@@ -26,7 +26,16 @@ export default class TodoistCompletedTasks extends Plugin {
 			name: "Fetch today's completed Todoist tasks",
 			callback: async () => {
 				new Notice("Fetching completed tasks..");
-				updateFileFromServer(this.settings, this.app, 0);
+				updateFileFromServer(this.settings, this.app, 0, false);
+			},
+		});
+
+		this.addCommand({
+			id: "todoist-fetch-completed-tasks",
+			name: "Fetch completed Todoist tasks from range in segment start",
+			callback: async () => {
+				new Notice("Fetching completed tasks..");
+				updateFileFromServer(this.settings, this.app, 0, true);
 			},
 		});
 
@@ -75,7 +84,8 @@ export default class TodoistCompletedTasks extends Plugin {
 					updateFileFromServer(
 						this.settings,
 						this.app,
-						Number(result)
+						Number(result),
+						false
 					);
 				}).open();
 			},
