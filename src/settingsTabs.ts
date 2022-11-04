@@ -60,7 +60,7 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
 				"\nSupports Obsidian's comments syntax.";
 		});
 		new Setting(containerEl)
-			.setName("Start line detector")
+			.setName("Start segment")
 			.setDesc(fieldDescription)
 			.addText((text) =>
 				text
@@ -79,7 +79,7 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
 				"\nSupports Obsidian's comments syntax.";
 		});
 		new Setting(containerEl)
-			.setName("End line detector")
+			.setName("End segment")
 			.setDesc(fieldDescription)
 			.addText((text) =>
 				text
