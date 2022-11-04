@@ -5,6 +5,7 @@ import { migrateSettings } from "./src/settingsMigrations";
 import { ExampleModal } from "./src/modal";
 import { getTimeframesForLastNHoursWithoutOffset } from "./src/utils";
 import { TodoistPluginSettingTab } from "./src/settingsTabs";
+import { FETCH_STRATEGIES } from "./src/constants";
 
 export default class TodoistCompletedTasks extends Plugin {
 	settings: TodoistSettings;
@@ -14,25 +15,34 @@ export default class TodoistCompletedTasks extends Plugin {
 
 		this.addRibbonIcon(
 			"sync",
-			"Fetch today's completed Todoist tasks",
+			"Fetch today's completed tasks",
 			(evt: MouseEvent) => {
 				new Notice("Fetching completed tasks..");
-				updateFileFromServer(this.settings, this.app, 0);
+				updateFileFromServer(this.settings, this.app, 0, FETCH_STRATEGIES.today);
 			}
 		);
 
 		this.addCommand({
 			id: "todoist-fetch-completed-tasks",
-			name: "Fetch today's completed Todoist tasks",
+			name: "Fetch today's completed tasks",
 			callback: async () => {
 				new Notice("Fetching completed tasks..");
-				updateFileFromServer(this.settings, this.app, 0);
+				updateFileFromServer(this.settings, this.app, 0, FETCH_STRATEGIES.today);
+			},
+		});
+
+		this.addCommand({
+			id: "todoist-fetch-completed-tasks",
+			name: "Fetch completed tasks using dates in segments",
+			callback: async () => {
+				new Notice("Fetching completed tasks..");
+				updateFileFromServer(this.settings, this.app, 0, FETCH_STRATEGIES.fromFile);
 			},
 		});
 
 		this.addCommand({
 			id: "todoist-fetch-completed-tasks-for-last-n-hours",
-			name: "Fetch completed Todoist tasks for last n hours",
+			name: "Fetch completed tasks for last N hours",
 			callback: async () => {
 				new ExampleModal(this.app, (result) => {
 					if (
@@ -75,7 +85,8 @@ export default class TodoistCompletedTasks extends Plugin {
 					updateFileFromServer(
 						this.settings,
 						this.app,
-						Number(result)
+						Number(result),
+						FETCH_STRATEGIES.lastNHours
 					);
 				}).open();
 			},

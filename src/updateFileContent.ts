@@ -2,51 +2,45 @@ import { App, Notice, MarkdownView } from "obsidian";
 import { TodoistSettings } from "./DefaultSettings";
 import { fetchTasks } from "./fetchTasks";
 import { formatTasks } from "./formatTasks";
+import { FETCH_STRATEGIES } from "./constants";
 import {
 	getTimeframesForUsersToday,
 	getTimeframesForLastNHours,
+	getTimeFromKeySegments,
+	settingsCheck,
+	segmentsCheck,
 } from "./utils";
 
 export async function updateFileFromServer(
 	settings: TodoistSettings,
 	app: App,
-	time: number
+	time: number,
+	fetchStrategy: string
 ) {
-	const view = app.workspace.getActiveViewOfType(MarkdownView);
-	const editor = view.editor;
-
-	if (settings.authToken === "") {
-		new Notice("No auth token set. Please set one in the settings.");
-		return;
-	}
+	const editor = app.workspace.getActiveViewOfType(MarkdownView).editor;
+	const fileContent = editor.getValue();
 
 	if (
-		settings.keywordSegmentStart === "" ||
-		settings.keywordSegmentEnd === ""
+		!settingsCheck(settings) ||
+		!segmentsCheck(fileContent, settings, fetchStrategy)
 	) {
-		new Notice("No keyword segment set. Please set one in the settings.");
 		return;
 	}
 
-	let fileContent = editor.getValue();
-	if (
-		!fileContent.contains(settings.keywordSegmentStart) ||
-		!fileContent.contains(settings.keywordSegmentEnd)
-	) {
-		new Notice(
-			`Keyword segment not found in current file. Please add '${settings.keywordSegmentStart}' and '${settings.keywordSegmentEnd}' to the file.`
-		);
-		return;
-	}
+	let timeFrames = null;
 
-	let timeFrames = {};
-
-	if (time === 0) {
+	if (fetchStrategy === FETCH_STRATEGIES.today) {
 		timeFrames = getTimeframesForUsersToday();
-	} else if (time > 0) {
+	}
+	if (fetchStrategy === FETCH_STRATEGIES.lastNHours) {
 		timeFrames = getTimeframesForLastNHours(time);
-	} else {
-		new Notice("Invalid time frame.");
+	}
+	if (fetchStrategy === FETCH_STRATEGIES.fromFile) {
+		timeFrames = getTimeFromKeySegments(fileContent);
+	}
+
+	if (timeFrames === null) {
+		new Notice("Invalid time frame.", 10000);
 		return;
 	}
 
@@ -62,11 +56,19 @@ export async function updateFileFromServer(
 
 	let formattedTasks = formatTasks(rawTasks, settings);
 
-	formattedTasks = `\n` + formattedTasks + `\n`;
-	formattedTasks = `${settings.keywordSegmentStart}${formattedTasks}`;
+	let rangeStart = fileContent.indexOf(settings.keywordSegmentStart);
+	let rangeEnd = fileContent.indexOf(settings.keywordSegmentEnd);
 
-	const rangeStart = fileContent.indexOf(settings.keywordSegmentStart);
-	const rangeEnd = fileContent.indexOf(settings.keywordSegmentEnd);
+
+	if (fetchStrategy === FETCH_STRATEGIES.fromFile) {
+		rangeStart = fileContent.indexOf(timeFrames.startString);
+		rangeEnd = fileContent.indexOf(timeFrames.endString);
+		formattedTasks = `${timeFrames.startString}${formattedTasks}`;
+	} else {
+		formattedTasks = `${settings.keywordSegmentStart}${formattedTasks}`;
+	}
+
+
 
 	editor.replaceRange(
 		formattedTasks,

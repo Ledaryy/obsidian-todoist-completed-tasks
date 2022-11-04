@@ -29,7 +29,7 @@ export function formatTasks(tasks: any, settings: TodoistSettings) {
 			});
 		}
 
-		const formattedTasks = tasks.reverse().map((t: any, index: number) => {
+		let formattedTasks = tasks.reverse().map((t: any, index: number) => {
 			let returnString = "";
 
 			if (taskPrefix === "$AUTOINCREMENT") {
@@ -56,15 +56,15 @@ export function formatTasks(tasks: any, settings: TodoistSettings) {
 			new Notice(
 				"Some subtasks were not rendered because parent tasks were not found." +
 					"\nPlease check the console for more information." +
-					"\nMessage will be removed after 10 sec.",
 				10000
 			);
 			console.log(
 				"Please note that to render completed subtasks, the parent task must also be completed."
 			);
 		}
-
-		return formattedTasks.join("\n");
+		formattedTasks = formattedTasks.join("\n")
+		formattedTasks = `\n` + formattedTasks + `\n`
+		return formattedTasks;
 	} catch (error) {
 		console.log(error);
 		new Notice(
