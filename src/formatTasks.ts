@@ -55,12 +55,14 @@ export function formatTasks(tasks: any, settings: TodoistSettings) {
 		if (makeSubtaskErrorNotice) {
 			new Notice(
 				"Some subtasks were not rendered because parent tasks were not found." +
-					"\nPlease check the console for more information." +
+					"\nPlease check the console for more information.",
 				10000
 			);
 			console.log(
 				"Please note that to render completed subtasks, the parent task must also be completed."
 			);
+			console.log("The following subtasks were not rendered:");
+			console.log(childTasks);
 		}
 		formattedTasks = formattedTasks.join("\n")
 		formattedTasks = `\n` + formattedTasks + `\n`
