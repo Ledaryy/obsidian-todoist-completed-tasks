@@ -5,6 +5,7 @@ import { migrateSettings } from "./src/settingsMigrations";
 import { ExampleModal } from "./src/modal";
 import { getTimeframesForLastNHoursWithoutOffset } from "./src/utils";
 import { TodoistPluginSettingTab } from "./src/settingsTabs";
+import { FETCH_STRATEGIES } from "./src/constants";
 
 export default class TodoistCompletedTasks extends Plugin {
 	settings: TodoistSettings;
@@ -17,7 +18,7 @@ export default class TodoistCompletedTasks extends Plugin {
 			"Fetch today's completed Todoist tasks",
 			(evt: MouseEvent) => {
 				new Notice("Fetching completed tasks..");
-				updateFileFromServer(this.settings, this.app, 0, false);
+				updateFileFromServer(this.settings, this.app, 0, FETCH_STRATEGIES.today);
 			}
 		);
 
@@ -26,7 +27,7 @@ export default class TodoistCompletedTasks extends Plugin {
 			name: "Fetch today's completed Todoist tasks",
 			callback: async () => {
 				new Notice("Fetching completed tasks..");
-				updateFileFromServer(this.settings, this.app, 0, false);
+				updateFileFromServer(this.settings, this.app, 0, FETCH_STRATEGIES.today);
 			},
 		});
 
@@ -35,7 +36,7 @@ export default class TodoistCompletedTasks extends Plugin {
 			name: "Fetch completed Todoist tasks from range in segment start",
 			callback: async () => {
 				new Notice("Fetching completed tasks..");
-				updateFileFromServer(this.settings, this.app, 0, true);
+				updateFileFromServer(this.settings, this.app, 0, FETCH_STRATEGIES.fromFile);
 			},
 		});
 
@@ -85,7 +86,7 @@ export default class TodoistCompletedTasks extends Plugin {
 						this.settings,
 						this.app,
 						Number(result),
-						false
+						FETCH_STRATEGIES.lastNHours
 					);
 				}).open();
 			},

@@ -2,6 +2,7 @@ import { App, Notice, MarkdownView } from "obsidian";
 import { TodoistSettings } from "./DefaultSettings";
 import { fetchTasks } from "./fetchTasks";
 import { formatTasks } from "./formatTasks";
+import { FETCH_STRATEGIES } from "./constants";
 import {
 	getTimeframesForUsersToday,
 	getTimeframesForLastNHours,
@@ -14,26 +15,28 @@ export async function updateFileFromServer(
 	settings: TodoistSettings,
 	app: App,
 	time: number,
-	useTimeFromKeySegment: boolean
+	fetchStrategy: string
 ) {
 	const editor = app.workspace.getActiveViewOfType(MarkdownView).editor;
 	const fileContent = editor.getValue();
 
 	if (
 		!settingsCheck(settings) ||
-		!segmentsCheck(fileContent, settings, useTimeFromKeySegment)
+		!segmentsCheck(fileContent, settings, fetchStrategy)
 	) {
 		return;
 	}
 
 	let timeFrames = null;
 
-	if (useTimeFromKeySegment) {
-		timeFrames = getTimeFromKeySegments(fileContent);
-	} else if (time === 0) {
+	if (fetchStrategy === FETCH_STRATEGIES.today) {
 		timeFrames = getTimeframesForUsersToday();
-	} else if (time > 0) {
+	}
+	if (fetchStrategy === FETCH_STRATEGIES.lastNHours) {
 		timeFrames = getTimeframesForLastNHours(time);
+	}
+	if (fetchStrategy === FETCH_STRATEGIES.fromFile) {
+		timeFrames = getTimeFromKeySegments(fileContent);
 	}
 
 	if (timeFrames === null) {
@@ -53,18 +56,19 @@ export async function updateFileFromServer(
 
 	let formattedTasks = formatTasks(rawTasks, settings);
 
-	formattedTasks = `\n` + formattedTasks + `\n`;
-
 	let rangeStart = fileContent.indexOf(settings.keywordSegmentStart);
 	let rangeEnd = fileContent.indexOf(settings.keywordSegmentEnd);
 
-	if (useTimeFromKeySegment) {
+
+	if (fetchStrategy === FETCH_STRATEGIES.fromFile) {
 		rangeStart = fileContent.indexOf(timeFrames.startString);
 		rangeEnd = fileContent.indexOf(timeFrames.endString);
 		formattedTasks = `${timeFrames.startString}${formattedTasks}`;
 	} else {
 		formattedTasks = `${settings.keywordSegmentStart}${formattedTasks}`;
 	}
+
+
 
 	editor.replaceRange(
 		formattedTasks,

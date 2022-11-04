@@ -1,5 +1,9 @@
 import { moment, Notice } from "obsidian";
-import { CONSTANTS_SEGMENTS, CONSTANTS_REGEX } from "./constants";
+import {
+	CONSTANTS_SEGMENTS,
+	CONSTANTS_REGEX,
+	FETCH_STRATEGIES,
+} from "./constants";
 
 function getTimeframesForUsersToday(): any {
 	let currentTime = new Date();
@@ -148,9 +152,9 @@ function settingsCheck(settings: any) {
 function segmentsCheck(
 	fileContent: string,
 	settings: any,
-	useTimeFromKeySegment: boolean
+	fetchStrategy: string
 ) {
-	if (useTimeFromKeySegment) {
+	if (fetchStrategy === FETCH_STRATEGIES.fromFile) {
 		const startString = fileContent.match(
 			CONSTANTS_REGEX.regexStartCompiled
 		);
@@ -164,16 +168,22 @@ function segmentsCheck(
 			);
 			return false;
 		}
-	} else if (
-		!fileContent.includes(settings.keywordSegmentStart) ||
-		!fileContent.includes(settings.keywordSegmentEnd)
+	}
+	if (
+		fetchStrategy === FETCH_STRATEGIES.today ||
+		fetchStrategy === FETCH_STRATEGIES.lastNHours
 	) {
-		new Notice(
-			`Keyword segment not found in current file. ` +
-				`Please add: \n'${settings.keywordSegmentStart}' \nand \n'${settings.keywordSegmentEnd}' \nto the file.`,
-			10000
-		);
-		return false;
+		if (
+			!fileContent.includes(settings.keywordSegmentStart) ||
+			!fileContent.includes(settings.keywordSegmentEnd)
+		) {
+			new Notice(
+				`Keyword segment not found in current file. ` +
+					`Please add: \n'${settings.keywordSegmentStart}' \nand \n'${settings.keywordSegmentEnd}' \nto the file.`,
+				10000
+			);
+			return false;
+		}
 	}
 
 	return true;

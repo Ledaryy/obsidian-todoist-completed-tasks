@@ -17,3 +17,9 @@ export const CONSTANTS_REGEX: any = {
 		"g"
 	),
 };
+
+export const FETCH_STRATEGIES: any = {
+	today: "today",
+	lastNHours: "lastNHours",
+	fromFile: "fromFile",
+};
