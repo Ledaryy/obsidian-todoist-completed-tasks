@@ -12,8 +12,19 @@ But I do still recommend using obsidian comments (default tags). Because you can
 There are a bit more details on how the plugin fetches the "today's" tasks.
 The plugin gets the current day number and your timezone from Obsidian. Then it gets a time range from 00:00 to 23:59 for that day. Then it converts it to UTC (because all completed tasks time is stored in UTC at the Todoist server). And finally, it fetches the tasks from Todoist API.
 
-## Fetching tasks from the last N hours
-Can be used only from the command palette (no button on the left panel for this). Will present prompt modal to enter a number of hours. There are no limits on how many hours you want to fetch, it can be days, months, or years. But see the "API limitations and Subtask rendering" section for limitations. Uses the same logic as "today's" tasks. But instead of getting the current day number, it gets the current DateTime and subtracts N hours from it. Then it gets the time range from that DateTime to the current day/hour. Then it converts it to UTC (because all completed tasks time is stored in UTC at the Todoist server). And finally, it fetches the tasks from Todoist API.
+## Fetching tasks for the last N hours
+It can be used only from the command palette (no button on the left panel for this). Will present prompt modal to enter a number of hours. 
+There are no limits on how many hours you want to fetch, it can be days, months, or years. But see the **"API limitations and Subtask rendering"** section for limitations. 
+Uses the same logic as "today's" tasks. But instead of getting the current day number, it gets the current DateTime and subtracts N hours from it. Then it gets the time range from that DateTime to the current day/hour. Then it converts it to UTC (because all completed tasks time is stored in UTC at the Todoist server). And finally, it fetches the tasks from the Todoist API.
+
+## Fetching tasks using dates from segments
+It can be used only from the command palette (no button on the left panel for this).
+This command will require two special segments (not configurable yet)
+- Start segment example: `%% TCT_TEMPLATED_START 1999-12-01 00:00 %%`
+- End segment example: `%% TCT_TEMPLATED_END 2022-04-28 23:59 %%`
+The date format is `{{YYYY-MM-DD HH:mm}}`. See the demo below.
+![fetch_using_dates_from_template](https://github.com/Ledaryy/obsidian-todoist-completed-tasks/blob/master/static/gif/fetch_using_dates_from_template.gif)
+Uses the same logic as "today's" tasks. But instead of getting the current day number, it gets the date range from the segment. Then it converts it to UTC (because all completed tasks time is stored in UTC at the Todoist server). And finally, it fetches the tasks from the Todoist API.
 
 ## API limitations and Subtask rendering
 This section applies to both "today's tasks" and "last N hours" fetching.

@@ -15,7 +15,7 @@ export default class TodoistCompletedTasks extends Plugin {
 
 		this.addRibbonIcon(
 			"sync",
-			"Fetch today's completed Todoist tasks",
+			"Fetch today's completed tasks",
 			(evt: MouseEvent) => {
 				new Notice("Fetching completed tasks..");
 				updateFileFromServer(this.settings, this.app, 0, FETCH_STRATEGIES.today);
@@ -24,7 +24,7 @@ export default class TodoistCompletedTasks extends Plugin {
 
 		this.addCommand({
 			id: "todoist-fetch-completed-tasks",
-			name: "Fetch today's completed Todoist tasks",
+			name: "Fetch today's completed tasks",
 			callback: async () => {
 				new Notice("Fetching completed tasks..");
 				updateFileFromServer(this.settings, this.app, 0, FETCH_STRATEGIES.today);
@@ -33,7 +33,7 @@ export default class TodoistCompletedTasks extends Plugin {
 
 		this.addCommand({
 			id: "todoist-fetch-completed-tasks",
-			name: "Fetch completed Todoist tasks from range in segment start",
+			name: "Fetch completed tasks using dates in segments",
 			callback: async () => {
 				new Notice("Fetching completed tasks..");
 				updateFileFromServer(this.settings, this.app, 0, FETCH_STRATEGIES.fromFile);
@@ -42,7 +42,7 @@ export default class TodoistCompletedTasks extends Plugin {
 
 		this.addCommand({
 			id: "todoist-fetch-completed-tasks-for-last-n-hours",
-			name: "Fetch completed Todoist tasks for last n hours",
+			name: "Fetch completed tasks for last N hours",
 			callback: async () => {
 				new ExampleModal(this.app, (result) => {
 					if (
