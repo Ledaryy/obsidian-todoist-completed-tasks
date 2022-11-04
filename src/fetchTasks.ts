@@ -16,7 +16,7 @@ export async function fetchTasks(
 
 	try {
 		const url =
-			`https://api.todoist.com/sync/v8/completed/get_all?since=` +
+			`https://api.todoist.com/sync/v9/completed/get_all?since=` +
 			timeStartFormattedDate +
 			`T` +
 			timeStartFormattedTime +
@@ -47,7 +47,7 @@ export async function fetchTasks(
 		if (renderSubtasks) {
 			const CompletedTasksPromises = completedTasksMetadata.items.map(
 				async (task: { task_id: number }) => {
-					const url = `https://api.todoist.com/sync/v8/items/get?item_id=${task.task_id}`;
+					const url = `https://api.todoist.com/sync/v9/items/get?item_id=${task.task_id}`;
 					let completedTasks = await fetch(url, {
 						headers: {
 							Authorization: `Bearer ${authToken}`,
