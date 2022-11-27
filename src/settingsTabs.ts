@@ -23,6 +23,7 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
 		this.addStartLineDetector(containerEl);
 		this.addEndLineDetector(containerEl);
 		this.addTaskPrefix(containerEl);
+		this.addTaskPostfix(containerEl);
 		this.addSubtaskRenderSwitch(containerEl);
 	}
 
@@ -95,10 +96,12 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
 		fieldDescription.createEl("span", null, (span) => {
 			span.innerText =
 				"Set prefix for tasks. Popular usecases:" +
-				'\nBullet points "*" ' +
-				'\nCompleted checkboxes "- [x]"' +
-				'\nIt also supports the special parameter "$AUTOINCREMENT" ' +
-				"which will be replaced with an auto-increment number." +
+				'\n"*" - Bullet points' +
+				'\n"- [x]" - Completed checkboxes' +
+				'\n"$AUTOINCREMENT. " - Ideally works with obsidian markdown and marks tasks and subtasks as a lists' +
+				"\n" +
+				'\nThe special parameter "$AUTOINCREMENT" ' +
+				"will be replaced with an auto-increment number." +
 				"\nFor all other parameters, refer to the ";
 			span.createEl("a", null, (link) => {
 				link.href = "https://www.markdownguide.org/tools/obsidian/";
@@ -113,6 +116,37 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.taskPrefix)
 					.onChange(async (value) => {
 						this.plugin.settings.taskPrefix = value;
+						await this.plugin.saveSettings();
+					})
+			);
+	}
+
+	private addTaskPostfix(containerEl: HTMLElement) {
+		const fieldDescription = document.createDocumentFragment();
+		fieldDescription.createEl("span", null, (span) => {
+			span.innerText =
+				"Set postfix for tasks. Popular usecases:" +
+				'\n"💪" - Keep it up!' +
+				'\n"✅$DATE" - to make it compatible with ';
+			span.createEl("a", null, (link) => {
+				link.href =
+					"https://github.com/obsidian-tasks-group/obsidian-tasks";
+				link.innerText = "Obsidian Tasks";
+			});
+			span.createEl("p", null, (textSpace) => {
+				textSpace.innerText =
+					'The special parameter "$DATE"' +
+					' will be replaced with the current date in "DD-MM-YYYY" format';
+			});
+		});
+		new Setting(containerEl)
+			.setName("Postfix")
+			.setDesc(fieldDescription)
+			.addText((text) =>
+				text
+					.setValue(this.plugin.settings.taskPostfix)
+					.onChange(async (value) => {
+						this.plugin.settings.taskPostfix = value;
 						await this.plugin.saveSettings();
 					})
 			);

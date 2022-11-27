@@ -4,6 +4,7 @@ import { TodoistSettings } from "./DefaultSettings";
 export function formatTasks(tasks: any, settings: TodoistSettings) {
 	try {
 		const taskPrefix = settings.taskPrefix;
+		const taskPostfix = settings.taskPostfix;
 
 		let childTasks = tasks.filter((task: any) => task.parentId !== null);
 		let makeSubtaskErrorNotice = false;
@@ -29,23 +30,39 @@ export function formatTasks(tasks: any, settings: TodoistSettings) {
 			});
 		}
 
-		let formattedTasks = tasks.reverse().map((t: any, index: number) => {
-			let returnString = "";
+		let formattedPostfix = taskPostfix;
 
-			if (taskPrefix === "$AUTOINCREMENT") {
-				returnString = `${index + 1}. ${t.content}`;
-			} else {
-				returnString = `${taskPrefix} ${t.content}`;
+		if (taskPostfix.includes("$DATE")) {
+			const date = new Date();
+			const day = date.getDate();
+			const month = date.getMonth() + 1;
+			const year = date.getFullYear();
+			const formattedDate = `${day}-${month}-${year}`;
+			formattedPostfix = taskPostfix.replace("$DATE", formattedDate);
+		}
+
+		let formattedTasks = tasks.reverse().map((t: any, index: number) => {
+			let formattedParentPrefix = taskPrefix;
+			if (taskPrefix.includes("$AUTOINCREMENT")) {
+				formattedParentPrefix = formattedParentPrefix.replace(
+					"$AUTOINCREMENT",
+					`${index + 1}`
+				);
 			}
+			let returnString = `${formattedParentPrefix} ${t.content} ${formattedPostfix}`;
+
 			if (t.childTasks.length > 0) {
 				const childTasks = t.childTasks
 					.reverse()
 					.map((childTask: any, index: number) => {
-						if (taskPrefix === "$AUTOINCREMENT") {
-							return `    ${index + 1}. ${childTask.content}`;
-						} else {
-							return `    ${taskPrefix} ${childTask.content}`;
+						let formattedChildPrefix = taskPrefix;
+						if (formattedChildPrefix.includes("$AUTOINCREMENT")) {
+							formattedChildPrefix = formattedChildPrefix.replace(
+								"$AUTOINCREMENT",
+								`${index + 1}`
+							);
 						}
+						return `    ${formattedChildPrefix} ${childTask.content} ${formattedPostfix}`;
 					});
 				returnString += "\n" + childTasks.join("\n");
 			}
@@ -64,8 +81,8 @@ export function formatTasks(tasks: any, settings: TodoistSettings) {
 			console.log("The following subtasks were not rendered:");
 			console.log(childTasks);
 		}
-		formattedTasks = formattedTasks.join("\n")
-		formattedTasks = `\n` + formattedTasks + `\n`
+		formattedTasks = formattedTasks.join("\n");
+		formattedTasks = `\n` + formattedTasks + `\n`;
 		return formattedTasks;
 	} catch (error) {
 		console.log(error);
