@@ -98,9 +98,9 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
 				"Set prefix for tasks. Popular usecases:" +
 				'\n"*" - Bullet points' +
 				'\n"- [x]" - Completed checkboxes' +
-				'\n"$AUTOINCREMENT. " - Ideally works with obsidian markdown and marks tasks and subtasks as a lists' +
+				'\n"{auto_increment}. " - Ideally works with obsidian markdown and marks tasks and subtasks as a lists' +
 				"\n" +
-				'\nThe special parameter "$AUTOINCREMENT" ' +
+				'\nThe special parameter "{auto_increment}" ' +
 				"will be replaced with an auto-increment number." +
 				"\nFor all other parameters, refer to the ";
 			span.createEl("a", null, (link) => {
@@ -127,7 +127,7 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
 			span.innerText =
 				"Set postfix for tasks. Popular usecases:" +
 				'\n"💪" - Keep it up!' +
-				'\n"✅$DATE" - to make it compatible with ';
+				'\n"✅{task_finish_date}" - to make it compatible with ';
 			span.createEl("a", null, (link) => {
 				link.href =
 					"https://github.com/obsidian-tasks-group/obsidian-tasks";
@@ -135,8 +135,12 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
 			});
 			span.createEl("p", null, (textSpace) => {
 				textSpace.innerText =
-					'The special parameter "$DATE"' +
-					' will be replaced with the current date in "DD-MM-YYYY" format';
+					'The special parameter "{current_date}"' +
+					' will be replaced with current date in "YYYY-MM-DD" format.' +
+					'\nAnother special parameter "{task_finish_date}"' +
+					' will be replaced with task finish date in "YYYY-MM-DD" format.' +
+					"\nAlso you can use {task_finish_datetime} and {current_datetime}" +
+					' to get date and time in "YYYY-MM-DD HH:MM:SS" format.';
 			});
 		});
 		new Setting(containerEl)

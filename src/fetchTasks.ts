@@ -1,5 +1,33 @@
 import { Notice } from "obsidian";
 
+export interface RawTodoistTask {
+	readonly taskId: string;
+	readonly parentId: string | null;
+	readonly content: string;
+	readonly dateCompleted: string | null;
+}
+
+function generateRawTodoistTask(
+	task: any,
+	isSubtaskRendering: boolean
+): RawTodoistTask {
+	if (isSubtaskRendering) {
+		return {
+			taskId: task.item.id,
+			parentId: task.item.parent_id,
+			content: task.item.content,
+			dateCompleted: task.item.completed_at,
+		};
+	} else {
+		return {
+			taskId: task.task_id,
+			parentId: null as null,
+			content: task.content,
+			dateCompleted: task.completed_at,
+		};
+	}
+}
+
 export async function fetchTasks(
 	authToken: string,
 	timeFrames: any,
@@ -13,6 +41,8 @@ export async function fetchTasks(
 	} = timeFrames;
 
 	const limit = renderSubtasks ? 30 : 200;
+
+	let mappedResults: any[] = [];
 
 	try {
 		const url =
@@ -33,9 +63,9 @@ export async function fetchTasks(
 			return response.json();
 		});
 
+		// If there are no completed tasks, return an empty array
 		if (completedTasksMetadata.items.length === 0) {
-			new Notice("No completed tasks found for the given timeframe");
-			return "";
+			return mappedResults;
 		}
 
 		new Notice(
@@ -43,45 +73,72 @@ export async function fetchTasks(
 				" completed tasks found. Processing..."
 		);
 
-		let parsedTodos = {};
 		if (renderSubtasks) {
-			const CompletedTasksPromises = completedTasksMetadata.items.map(
-				async (task: { task_id: number }) => {
-					const url = `https://api.todoist.com/sync/v9/items/get?item_id=${task.task_id}`;
-					let completedTasks = await fetch(url, {
-						headers: {
-							Authorization: `Bearer ${authToken}`,
-						},
-					});
-					const data = await completedTasks.json();
-					return data;
+			const completedTasksPromises = completedTasksMetadata.items.map(
+				async (task: { task_id: string }) => {
+					return fetchSingleTask(authToken, task.task_id);
 				}
 			);
-			const completedTasks = await Promise.all(CompletedTasksPromises);
-			parsedTodos = completedTasks.map((task: any) => {
-				return {
-					content: task.item.content,
-					dateCompleted: task.item.date_completed,
-					description: task.item.description,
-					parentId: task.item.parent_id,
-					taskId: task.item.id,
-					childTasks: [],
-				};
+			mappedResults = await Promise.all(completedTasksPromises);
+
+			let childTasks = mappedResults.filter(
+				(task: RawTodoistTask) => task.parentId !== null
+			);
+
+			childTasks.forEach((task: any) => {
+				const parentTask = mappedResults.find(
+					(t: RawTodoistTask) => t.taskId === task.parentId
+				);
+				if (!parentTask) {
+					let missedParentTask = fetchSingleTask(
+						authToken,
+						task.parentId
+					);
+					mappedResults.push(missedParentTask);
+				}
 			});
+			mappedResults = await Promise.all(mappedResults);
 		} else {
-			parsedTodos = completedTasksMetadata.items.map((task: any) => {
-				return {
-					content: task.content,
-					dateCompleted: task.completed_date,
-					description: "",
-					parentId: null as null,
-					taskId: task.task_id,
-					childTasks: "",
-				};
+			mappedResults = completedTasksMetadata.items.map((task: any) => {
+				return generateRawTodoistTask(task, renderSubtasks);
 			});
 		}
 
-		return parsedTodos;
+		return mappedResults;
+	} catch (e) {
+		let errorMsg = "";
+		switch (e.httpStatusCode) {
+			case undefined:
+				errorMsg = `There was a problem pulling data from Todoist. Is your internet connection working?`;
+				break;
+			case 403:
+				errorMsg =
+					"Authentication with todoist server failed. Check that" +
+					" your API token is set correctly in the settings.";
+				break;
+			default:
+				`There was a problem pulling data from Todoist. ${e.responseData}`;
+		}
+		console.log(errorMsg, e);
+		new Notice(errorMsg);
+		throw e;
+	}
+}
+
+export async function fetchSingleTask(
+	authToken: string,
+	parentId: string
+): Promise<any> {
+	try {
+		const url = `https://api.todoist.com/sync/v9/items/get?item_id=${parentId}`;
+		let parentTask = await fetch(url, {
+			headers: {
+				Authorization: `Bearer ${authToken}`,
+			},
+		});
+		const task = await parentTask.json();
+
+		return generateRawTodoistTask(task, true);
 	} catch (e) {
 		let errorMsg = "";
 		switch (e.httpStatusCode) {

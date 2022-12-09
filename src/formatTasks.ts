@@ -1,67 +1,132 @@
 import { Notice } from "obsidian";
 import { TodoistSettings } from "./DefaultSettings";
+import { RawTodoistTask } from "./fetchTasks";
 
-export function formatTasks(tasks: any, settings: TodoistSettings) {
-	try {
-		const taskPrefix = settings.taskPrefix;
-		const taskPostfix = settings.taskPostfix;
+export interface TodoistTask {
+	taskId: number;
+	content: string;
+	dateCompleted: Date | null;
+	childTasks: TodoistTask[];
+}
 
-		let childTasks = tasks.filter((task: any) => task.parentId !== null);
-		let makeSubtaskErrorNotice = false;
+function prepareTasksForRendering(tasks: any) {
+	let childTasks = tasks.filter(
+		(task: RawTodoistTask) => task.parentId !== null
+	);
+	let renderedTasks: TodoistTask[] = [];
 
-		if (childTasks.length > 0) {
-			tasks.forEach((task: any) => {
-				if (task.parentId !== null) {
-					const parentTask = tasks.find(
-						(t: any) => t.taskId === task.parentId
-					);
-					if (parentTask) {
-						parentTask.childTasks.push(task);
-					} else {
-						console.log("Parent task not found for: ", task);
-						makeSubtaskErrorNotice = true;
-					}
-				}
-			});
+	function convertToDateObj(date: string) {
+		if (date === null) {
+			return null;
+		}
+		return new Date(date);
+	}
 
-			childTasks.forEach((task: any) => {
-				const index = tasks.indexOf(task);
-				tasks.splice(index, 1);
+	tasks.forEach((task: any) => {
+		if (task.parentId === null) {
+			renderedTasks.push({
+				taskId: task.taskId,
+				content: task.content,
+				dateCompleted: convertToDateObj(task.dateCompleted),
+				childTasks: [],
 			});
 		}
+	});
 
-		let formattedPostfix = taskPostfix;
+	childTasks.forEach(async (task: any) => {
+		const parentTaskIndex = renderedTasks.findIndex(
+			(t: TodoistTask) => t.taskId === task.parentId
+		);
+		renderedTasks[parentTaskIndex].childTasks.push({
+			taskId: task.taskId,
+			content: task.content,
+			dateCompleted: convertToDateObj(task.dateCompleted),
+			childTasks: [],
+		});
+	});
 
-		if (taskPostfix.includes("$DATE")) {
-			const date = new Date();
+	return renderedTasks;
+}
+
+function renderTasksAsText(tasks: any, settings: TodoistSettings) {
+	console.log(tasks);
+
+	function renderTaskFinishDate(task: any) {
+		if (task.dateCompleted === null) {
+			return "Not completed yet";
+		}
+
+		if (settings.taskPostfix.includes("{task_finish_date}")) {
+			const date = task.dateCompleted;
 			const day = date.getDate();
 			const month = date.getMonth() + 1;
 			const year = date.getFullYear();
-			const formattedDate = `${day}-${month}-${year}`;
-			formattedPostfix = taskPostfix.replace("$DATE", formattedDate);
+			const formattedDate = `${year}-${month}-${day}`;
+			return formattedDate;
 		}
 
+		if (settings.taskPostfix.includes("{task_finish_datetime}")) {
+			const date = task.dateCompleted;
+			const day = date.getDate();
+			const month = date.getMonth() + 1;
+			const year = date.getFullYear();
+			const hours = date.getHours();
+			const minutes = date.getMinutes();
+			const seconds = date.getSeconds();
+			const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+			return formattedDate;
+		}
+
+		if (settings.taskPostfix.includes("{current_date}")) {
+			const date = task.dateCompleted;
+			const day = date.getDate();
+			const month = date.getMonth() + 1;
+			const year = date.getFullYear();
+			const formattedDate = `${year}-${month}-${day}`;
+			return formattedDate;
+		}
+
+		if (settings.taskPostfix.includes("{current_datetime}")) {
+			const date = task.dateCompleted;
+			const day = date.getDate();
+			const month = date.getMonth() + 1;
+			const year = date.getFullYear();
+			const hours = date.getHours();
+			const minutes = date.getMinutes();
+			const seconds = date.getSeconds();
+			const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+			return formattedDate;
+		}
+	}
+
+	function renderTaskPostfix(task: any) {
+		let regex =
+			/{task_finish_date}|{task_finish_datetime}|{current_date}|{current_datetime}/g;
+		return settings.taskPostfix.replace(regex, renderTaskFinishDate(task));
+	}
+
+	function renderTaskPrefix(task: any, index: number) {
+		let regex = /{auto_increment}/g;
+		return settings.taskPrefix.replace(regex, `${index + 1}`);
+	}
+
+	try {
 		let formattedTasks = tasks.reverse().map((t: any, index: number) => {
-			let formattedParentPrefix = taskPrefix;
-			if (taskPrefix.includes("$AUTOINCREMENT")) {
-				formattedParentPrefix = formattedParentPrefix.replace(
-					"$AUTOINCREMENT",
-					`${index + 1}`
-				);
-			}
-			let returnString = `${formattedParentPrefix} ${t.content} ${formattedPostfix}`;
+			let formattedParentPrefix = renderTaskPrefix(t, index);
+			let formattedParentPostfix = renderTaskPostfix(t);
+
+			let returnString = `${formattedParentPrefix} ${t.content} ${formattedParentPostfix}`;
 
 			if (t.childTasks.length > 0) {
 				const childTasks = t.childTasks
 					.reverse()
 					.map((childTask: any, index: number) => {
-						let formattedChildPrefix = taskPrefix;
-						if (formattedChildPrefix.includes("$AUTOINCREMENT")) {
-							formattedChildPrefix = formattedChildPrefix.replace(
-								"$AUTOINCREMENT",
-								`${index + 1}`
-							);
-						}
+						let formattedChildPrefix = renderTaskPrefix(
+							childTask,
+							index
+						);
+						let formattedPostfix = renderTaskPostfix(childTask);
+
 						return `    ${formattedChildPrefix} ${childTask.content} ${formattedPostfix}`;
 					});
 				returnString += "\n" + childTasks.join("\n");
@@ -69,18 +134,6 @@ export function formatTasks(tasks: any, settings: TodoistSettings) {
 			return returnString;
 		});
 
-		if (makeSubtaskErrorNotice) {
-			new Notice(
-				"Some subtasks were not rendered because parent tasks were not found." +
-					"\nPlease check the console for more information.",
-				10000
-			);
-			console.log(
-				"Please note that to render completed subtasks, the parent task must also be completed."
-			);
-			console.log("The following subtasks were not rendered:");
-			console.log(childTasks);
-		}
 		formattedTasks = formattedTasks.join("\n");
 		formattedTasks = `\n` + formattedTasks + `\n`;
 		return formattedTasks;
@@ -93,3 +146,5 @@ export function formatTasks(tasks: any, settings: TodoistSettings) {
 		return "";
 	}
 }
+
+export { renderTasksAsText, prepareTasksForRendering };

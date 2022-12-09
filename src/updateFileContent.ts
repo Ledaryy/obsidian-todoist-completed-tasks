@@ -1,7 +1,7 @@
 import { App, Notice, MarkdownView } from "obsidian";
 import { TodoistSettings } from "./DefaultSettings";
 import { fetchTasks } from "./fetchTasks";
-import { formatTasks } from "./formatTasks";
+import { renderTasksAsText, prepareTasksForRendering } from "./formatTasks";
 import { FETCH_STRATEGIES } from "./constants";
 import {
 	getTimeframesForUsersToday,
@@ -51,27 +51,26 @@ export async function updateFileFromServer(
 	);
 
 	if (rawTasks.length === 0) {
+		new Notice("No completed tasks found for the given timeframe");
 		return;
 	}
 
-	let formattedTasks = formatTasks(rawTasks, settings);
+	let formattedTasks = prepareTasksForRendering(rawTasks);
+	let renderedText = renderTasksAsText(formattedTasks, settings);
 
 	let rangeStart = fileContent.indexOf(settings.keywordSegmentStart);
 	let rangeEnd = fileContent.indexOf(settings.keywordSegmentEnd);
 
-
 	if (fetchStrategy === FETCH_STRATEGIES.fromFile) {
 		rangeStart = fileContent.indexOf(timeFrames.startString);
 		rangeEnd = fileContent.indexOf(timeFrames.endString);
-		formattedTasks = `${timeFrames.startString}${formattedTasks}`;
+		renderedText = `${timeFrames.startString}${renderedText}`;
 	} else {
-		formattedTasks = `${settings.keywordSegmentStart}${formattedTasks}`;
+		renderedText = `${settings.keywordSegmentStart}${renderedText}`;
 	}
 
-
-
 	editor.replaceRange(
-		formattedTasks,
+		renderedText,
 		editor.offsetToPos(rangeStart),
 		editor.offsetToPos(rangeEnd)
 	);
