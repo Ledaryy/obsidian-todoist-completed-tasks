@@ -85,16 +85,18 @@ export async function fetchTasks(
 				(task: RawTodoistTask) => task.parentId !== null
 			);
 
+			let queuedParentTasks = [] as string[];
 			childTasks.forEach((task: any) => {
 				const parentTask = mappedResults.find(
 					(t: RawTodoistTask) => t.taskId === task.parentId
 				);
-				if (!parentTask) {
+				if (!parentTask && !queuedParentTasks.includes(task.parentId)) {
 					let missedParentTask = fetchSingleTask(
 						authToken,
 						task.parentId
 					);
 					mappedResults.push(missedParentTask);
+					queuedParentTasks.push(task.parentId);
 				}
 			});
 			mappedResults = await Promise.all(mappedResults);
