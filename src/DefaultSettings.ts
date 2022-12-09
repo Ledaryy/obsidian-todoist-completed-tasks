@@ -4,14 +4,16 @@ export interface TodoistSettings {
 	keywordSegmentEnd: string;
 	authToken: string;
 	taskPrefix: string;
+	taskPostfix: string;
 	renderSubtasks: boolean;
 }
 
 export const DEFAULT_SETTINGS: TodoistSettings = {
-	settingsVersion: 3,
+	settingsVersion: 4,
 	keywordSegmentStart: "%% COMPLETED_TODOIST_TASKS_START %%",
 	keywordSegmentEnd: "%% COMPLETED_TODOIST_TASKS_END %%",
 	authToken: "",
 	taskPrefix: "*",
+	taskPostfix: "",
 	renderSubtasks: true,
 };
