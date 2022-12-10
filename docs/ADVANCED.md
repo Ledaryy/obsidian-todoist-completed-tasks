@@ -8,6 +8,13 @@ Quick preview of how I use my segments:
 But I do still recommend using obsidian comments (default tags). Because you can hide it preview. See this demo.
 ![obsidian_comments_trick](https://github.com/Ledaryy/obsidian-todoist-completed-tasks/blob/master/static/gif/obsidian_comments_trick.gif)
 
+## Prefix/Postfix
+The plugin will render the tasks with the prefix and postfix.
+You can use the HTML in the prefix/postfix to make it look better. For example, this is how I use it. There is a dash and a task finish DateTime. All wrapped in a span with a grey colour and small font size.
+`<span style="color:grey; font-size:10px">- {task_finish_datetime}</span>`
+Demo:
+![advanced_prefix_postfix_demo](https://github.com/Ledaryy/obsidian-todoist-completed-tasks/blob/master/static/img/postfix.png)
+
 ## Fetching today's tasks
 There are a bit more details on how the plugin fetches the "today's" tasks.
 The plugin gets the current day number and your timezone from Obsidian. Then it gets a time range from 00:00 to 23:59 for that day. Then it converts it to UTC (because all completed tasks time is stored in UTC at the Todoist server). And finally, it fetches the tasks from Todoist API.
