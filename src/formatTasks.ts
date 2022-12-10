@@ -53,7 +53,7 @@ function renderTasksAsText(tasks: any, settings: TodoistSettings) {
 
 	function renderTaskFinishDate(task: any) {
 		if (task.dateCompleted === null) {
-			return "Not completed yet";
+			return "N/A";
 		}
 
 		if (settings.taskPostfix.includes("{task_finish_date}")) {
