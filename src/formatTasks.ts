@@ -1,4 +1,4 @@
-import { Notice } from "obsidian";
+import { moment, Notice } from "obsidian";
 import { TodoistSettings } from "./DefaultSettings";
 import { RawTodoistTask } from "./fetchTasks";
 
@@ -57,44 +57,22 @@ function renderTasksAsText(tasks: any, settings: TodoistSettings) {
 		}
 
 		if (settings.taskPostfix.includes("{task_finish_date}")) {
-			const date = task.dateCompleted;
-			const day = date.getDate();
-			const month = date.getMonth() + 1;
-			const year = date.getFullYear();
-			const formattedDate = `${year}-${month}-${day}`;
+			const formattedDate = moment(task.dateCompleted).format("YYYY-MM-DD");;
 			return formattedDate;
 		}
 
 		if (settings.taskPostfix.includes("{task_finish_datetime}")) {
-			const date = task.dateCompleted;
-			const day = date.getDate();
-			const month = date.getMonth() + 1;
-			const year = date.getFullYear();
-			const hours = date.getHours();
-			const minutes = date.getMinutes();
-			const seconds = date.getSeconds();
-			const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+			const formattedDate = moment(task.dateCompleted).format("YYYY-MM-DD HH:mm");;
 			return formattedDate;
 		}
-
+		
 		if (settings.taskPostfix.includes("{current_date}")) {
-			const date = task.dateCompleted;
-			const day = date.getDate();
-			const month = date.getMonth() + 1;
-			const year = date.getFullYear();
-			const formattedDate = `${year}-${month}-${day}`;
+			const formattedDate = moment(task.dateCompleted).format("YYYY-MM-DD");;
 			return formattedDate;
 		}
-
+		
 		if (settings.taskPostfix.includes("{current_datetime}")) {
-			const date = task.dateCompleted;
-			const day = date.getDate();
-			const month = date.getMonth() + 1;
-			const year = date.getFullYear();
-			const hours = date.getHours();
-			const minutes = date.getMinutes();
-			const seconds = date.getSeconds();
-			const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+			const formattedDate = moment(task.dateCompleted).format("YYYY-MM-DD HH:mm");;
 			return formattedDate;
 		}
 	}
