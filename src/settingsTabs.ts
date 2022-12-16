@@ -140,7 +140,8 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
 					'\nAnother special parameter "{task_finish_date}"' +
 					' will be replaced with task finish date in "YYYY-MM-DD" format.' +
 					"\nAlso you can use {task_finish_datetime} and {current_datetime}" +
-					' to get date and time in "YYYY-MM-DD HH:MM:SS" format.';
+					' to get date and time in "YYYY-MM-DD HH:MM:SS" format.' + 
+					"\nNote: Todoist API does not always provide a task finish date, 'N/A' will be used in this case.";
 			});
 		});
 		new Setting(containerEl)
