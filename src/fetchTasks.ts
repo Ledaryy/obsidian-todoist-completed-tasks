@@ -100,6 +100,18 @@ export async function fetchTasks(
 				}
 			});
 			mappedResults = await Promise.all(mappedResults);
+
+			// Merge metadata dates into the task objects
+			mappedResults.forEach((task: any) => {
+				const taskMetadata = completedTasksMetadata.items.find(
+					(t: any) => t.task_id === task.taskId
+				);
+				if (!taskMetadata) {
+					task.dateCompleted = null;
+				} else {
+					task.dateCompleted = taskMetadata.completed_at;
+				}
+			});
 		} else {
 			mappedResults = completedTasksMetadata.items.map((task: any) => {
 				return generateRawTodoistTask(task, renderSubtasks);
