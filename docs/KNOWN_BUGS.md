@@ -1,3 +1,5 @@
 ### Known Bugs
-- [x] Subtask fetched without completed parent task produces an error
-- [x] If 0 tasks are found, the plugin will continue processing the rest of the code and will display the empty list
+
+| Discovered at | Fixed in | Description                                                                                                                                                        | 
+| ------------- | :------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | 
+| 16/12/2022    |  v1.4.4  | Postfix {task)finish_date} wasn't working, "Not completed yet" was rendered, [Issue 22](https://github.com/Ledaryy/obsidian-todoist-completed-tasks/issues/22)     |

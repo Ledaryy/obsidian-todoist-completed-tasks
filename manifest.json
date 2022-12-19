@@ -3,7 +3,7 @@
 	"name": "Todoist completed tasks",
 	"version": "1.4.4",
 	"minAppVersion": "0.15.0",
-	"description": "Fetches completed tasks from todoist API and adds them to the Obsidian note.",
+	"description": "Add completed tasks from Todoist to your Obsidian notes",
 	"author": "Andrey Kulishov",
 	"authorUrl": "https://github.com/Ledaryy",
 	"isDesktopOnly": false
