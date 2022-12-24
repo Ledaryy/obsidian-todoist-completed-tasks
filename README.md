@@ -27,5 +27,9 @@ This obsidian plugin fetches your completed tasks from Todoist and adds them to 
 - Fetch completed tasks using dates from segments ([Templater](https://github.com/SilentVoid13/Templater) support)
 - Customizable prefix and postfix for each task ([Obsidian Tasks](https://github.com/obsidian-tasks-group/obsidian-tasks) support)
 
+## Say Thanks 🙏
+If you like this plugin and would like to buy me a coffee, you can!
+[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="BuyMeACoffee" width="100">](https://www.buymeacoffee.com/ledaryy)
+
 ## Attribution
 This plugin is heavily influenced by the [Todoist Text](https://github.com/wesmoncrief/obsidian-todoist-text) plugin.
