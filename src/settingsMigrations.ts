@@ -14,6 +14,9 @@ export function migrateSettings(settings: any): TodoistSettings {
 	if (getSettingsVersion(newSettings) == 3) {
 		newSettings = migrateToV4(newSettings as TodoistSettingsV3);
 	}
+	if (getSettingsVersion(newSettings) == 4) {
+		newSettings = migrateToLatest(newSettings as TodoistSettingsV4);
+	}
 
 	return newSettings;
 }
@@ -53,7 +56,7 @@ function migrateToV3(settings: TodoistSettingsV2): TodoistSettingsV3 {
 	};
 }
 
-function migrateToV4(settings: TodoistSettingsV3): TodoistSettings {
+function migrateToV4(settings: TodoistSettingsV3): TodoistSettingsV4 {
 	return {
 		settingsVersion: 4,
 		keywordSegmentStart: settings.keywordSegmentStart,
@@ -62,6 +65,19 @@ function migrateToV4(settings: TodoistSettingsV3): TodoistSettings {
 		taskPrefix: settings.taskPrefix,
 		taskPostfix: DEFAULT_SETTINGS.taskPostfix,
 		renderSubtasks: settings.renderSubtasks,
+	};
+}
+
+function migrateToLatest(settings: TodoistSettingsV4): TodoistSettings {
+	return {
+		settingsVersion: 5,
+		keywordSegmentStart: settings.keywordSegmentStart,
+		keywordSegmentEnd: settings.keywordSegmentEnd,
+		authToken: settings.authToken,
+		taskPrefix: settings.taskPrefix,
+		taskPostfix: settings.taskPostfix,
+		renderSubtasks: settings.renderSubtasks,
+		renderProjectsHeaders: DEFAULT_SETTINGS.renderProjectsHeaders,
 	};
 }
 
@@ -90,5 +106,15 @@ interface TodoistSettingsV3 {
 	keywordSegmentEnd: string;
 	authToken: string;
 	taskPrefix: string;
+	renderSubtasks: boolean;
+}
+
+export interface TodoistSettingsV4 {
+	settingsVersion: number;
+	keywordSegmentStart: string;
+	keywordSegmentEnd: string;
+	authToken: string;
+	taskPrefix: string;
+	taskPostfix: string;
 	renderSubtasks: boolean;
 }

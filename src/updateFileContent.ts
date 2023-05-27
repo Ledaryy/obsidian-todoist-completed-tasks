@@ -44,19 +44,23 @@ export async function updateFileFromServer(
 		return;
 	}
 
-	const rawTasks = await fetchTasks(
+	const fetchResults = await fetchTasks(
 		settings.authToken,
 		timeFrames,
 		settings.renderSubtasks
 	);
 
-	if (rawTasks.length === 0) {
+	if (fetchResults.tasksResults.length === 0) {
 		new Notice("No completed tasks found for the given timeframe");
 		return;
 	}
 
-	let formattedTasks = prepareTasksForRendering(rawTasks);
-	let renderedText = renderTasksAsText(formattedTasks, settings);
+	let formattedTasks = prepareTasksForRendering(fetchResults.tasksResults);
+	let renderedText = renderTasksAsText(
+		formattedTasks,
+		fetchResults.projectsResults,
+		settings
+	);
 
 	let rangeStart = fileContent.indexOf(settings.keywordSegmentStart);
 	let rangeEnd = fileContent.indexOf(settings.keywordSegmentEnd);
@@ -68,7 +72,6 @@ export async function updateFileFromServer(
 	} else {
 		renderedText = `${settings.keywordSegmentStart}${renderedText}`;
 	}
-
 	editor.replaceRange(
 		renderedText,
 		editor.offsetToPos(rangeStart),

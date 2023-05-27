@@ -24,6 +24,7 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
 		this.addEndLineDetector(containerEl);
 		this.addTaskPrefix(containerEl);
 		this.addTaskPostfix(containerEl);
+		this.addProjectsRenderSwitch(containerEl);
 		this.addSubtaskRenderSwitch(containerEl);
 	}
 
@@ -140,7 +141,7 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
 					'\nAnother special parameter "{task_finish_date}"' +
 					' will be replaced with task finish date in "YYYY-MM-DD" format.' +
 					"\nAlso you can use {task_finish_datetime} and {current_datetime}" +
-					' to get date and time in "YYYY-MM-DD HH:MM:SS" format.' + 
+					' to get date and time in "YYYY-MM-DD HH:MM:SS" format.' +
 					"\nNote: Non-completed parent tasks can have completed subtasks, 'N/A' will be used for the parent in this case.";
 			});
 		});
@@ -152,6 +153,26 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.taskPostfix)
 					.onChange(async (value) => {
 						this.plugin.settings.taskPostfix = value;
+						await this.plugin.saveSettings();
+					})
+			);
+	}
+
+	private addProjectsRenderSwitch(containerEl: HTMLElement) {
+		const fieldDescription = document.createDocumentFragment();
+		fieldDescription.createEl("span", null, (span) => {
+			span.innerText =
+				"Renders projects names as headers. " +
+				"\nIf disabled, projects names will not be rendered at all.";
+		});
+		new Setting(containerEl)
+			.setName("Render projects names")
+			.setDesc(fieldDescription)
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.renderProjectsHeaders)
+					.onChange(async (value) => {
+						this.plugin.settings.renderProjectsHeaders = value;
 						await this.plugin.saveSettings();
 					})
 			);

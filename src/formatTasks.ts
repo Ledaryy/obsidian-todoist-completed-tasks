@@ -7,6 +7,7 @@ export interface TodoistTask {
 	content: string;
 	dateCompleted: Date | null;
 	childTasks: TodoistTask[];
+	projectId?: string | null;
 }
 
 function prepareTasksForRendering(tasks: any) {
@@ -28,6 +29,7 @@ function prepareTasksForRendering(tasks: any) {
 				taskId: task.taskId,
 				content: task.content,
 				dateCompleted: convertToDateObj(task.dateCompleted),
+				projectId: task.projectId,
 				childTasks: [],
 			});
 		}
@@ -41,6 +43,7 @@ function prepareTasksForRendering(tasks: any) {
 			taskId: task.taskId,
 			content: task.content,
 			dateCompleted: convertToDateObj(task.dateCompleted),
+			projectId: task.projectId,
 			childTasks: [],
 		});
 	});
@@ -48,31 +51,41 @@ function prepareTasksForRendering(tasks: any) {
 	return renderedTasks;
 }
 
-function renderTasksAsText(tasks: any, settings: TodoistSettings) {
-	console.log(tasks);
-
+function renderTasksAsText(
+	tasks: any,
+	projectsMetadata: any,
+	settings: TodoistSettings
+) {
 	function renderTaskFinishDate(task: any) {
 		if (task.dateCompleted === null) {
 			return "N/A";
 		}
 
 		if (settings.taskPostfix.includes("{task_finish_date}")) {
-			const formattedDate = moment(task.dateCompleted).format("YYYY-MM-DD");;
+			const formattedDate = moment(task.dateCompleted).format(
+				"YYYY-MM-DD"
+			);
 			return formattedDate;
 		}
 
 		if (settings.taskPostfix.includes("{task_finish_datetime}")) {
-			const formattedDate = moment(task.dateCompleted).format("YYYY-MM-DD HH:mm");;
+			const formattedDate = moment(task.dateCompleted).format(
+				"YYYY-MM-DD HH:mm"
+			);
 			return formattedDate;
 		}
-		
+
 		if (settings.taskPostfix.includes("{current_date}")) {
-			const formattedDate = moment(task.dateCompleted).format("YYYY-MM-DD");;
+			const formattedDate = moment(task.dateCompleted).format(
+				"YYYY-MM-DD"
+			);
 			return formattedDate;
 		}
-		
+
 		if (settings.taskPostfix.includes("{current_datetime}")) {
-			const formattedDate = moment(task.dateCompleted).format("YYYY-MM-DD HH:mm");;
+			const formattedDate = moment(task.dateCompleted).format(
+				"YYYY-MM-DD HH:mm"
+			);
 			return formattedDate;
 		}
 	}
@@ -89,32 +102,69 @@ function renderTasksAsText(tasks: any, settings: TodoistSettings) {
 	}
 
 	try {
-		let formattedTasks = tasks.reverse().map((t: any, index: number) => {
-			let formattedParentPrefix = renderTaskPrefix(t, index);
-			let formattedParentPostfix = renderTaskPostfix(t);
+		let allTasks = "";
 
-			let returnString = `${formattedParentPrefix} ${t.content} ${formattedParentPostfix}`;
-
-			if (t.childTasks.length > 0) {
-				const childTasks = t.childTasks
-					.reverse()
-					.map((childTask: any, index: number) => {
-						let formattedChildPrefix = renderTaskPrefix(
-							childTask,
-							index
-						);
-						let formattedPostfix = renderTaskPostfix(childTask);
-
-						return `    ${formattedChildPrefix} ${childTask.content} ${formattedPostfix}`;
-					});
-				returnString += "\n" + childTasks.join("\n");
+		function renderProjectHeader(project: any) {
+			if (settings.renderProjectsHeaders) {
+				return `\n* ${project.name}\n`;
 			}
-			return returnString;
-		});
+			return "";
+		}
 
-		formattedTasks = formattedTasks.join("\n");
-		formattedTasks = `\n` + formattedTasks + `\n`;
-		return formattedTasks;
+		function renderTaskText(tasks: any, settings: TodoistSettings) {
+			return tasks.reverse().map((t: any, index: number) => {
+				let formattedParentPrefix = renderTaskPrefix(t, index);
+				let formattedParentPostfix = renderTaskPostfix(t);
+				let returnString = "";
+				if (settings.renderProjectsHeaders) {
+					returnString = `    ${formattedParentPrefix} ${t.content} ${formattedParentPostfix}`;
+				} else {
+					returnString = `${formattedParentPrefix} ${t.content} ${formattedParentPostfix}`;
+				}
+
+				if (t.childTasks.length > 0) {
+					const childTasks = t.childTasks
+						.reverse()
+						.map((childTask: any, index: number) => {
+							let formattedChildPrefix = renderTaskPrefix(
+								childTask,
+								index
+							);
+							let formattedPostfix = renderTaskPostfix(childTask);
+
+							if (settings.renderProjectsHeaders) {
+								return `        ${formattedChildPrefix} ${childTask.content} ${formattedPostfix}`;
+							} else {
+								return `    ${formattedChildPrefix} ${childTask.content} ${formattedPostfix}`;
+							}
+						});
+					returnString += "\n" + childTasks.join("\n");
+				}
+				return returnString;
+			});
+		}
+
+		if (settings.renderProjectsHeaders) {
+			for (const [key, project] of Object.entries(projectsMetadata)) {
+				let projectTasks = tasks.filter(
+					(task: any) => task.projectId === key
+				);
+				allTasks += renderProjectHeader(project);
+
+				let formattedTasks = renderTaskText(projectTasks, settings);
+
+				allTasks += formattedTasks.join("\n");
+			}
+
+			allTasks = allTasks + `\n`;
+
+			return allTasks;
+		} else {
+			let formattedTasks = renderTaskText(tasks, settings);
+			formattedTasks = formattedTasks.join("\n");
+			formattedTasks = `\n` + formattedTasks + `\n`;
+			return formattedTasks;
+		}
 	} catch (error) {
 		console.log(error);
 		new Notice(
