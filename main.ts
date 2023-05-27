@@ -18,7 +18,12 @@ export default class TodoistCompletedTasks extends Plugin {
 			"Fetch today's completed tasks",
 			(evt: MouseEvent) => {
 				new Notice("Fetching completed tasks..");
-				updateFileFromServer(this.settings, this.app, 0, FETCH_STRATEGIES.today);
+				updateFileFromServer(
+					this.settings,
+					this.app,
+					0,
+					FETCH_STRATEGIES.today
+				);
 			}
 		);
 
@@ -27,7 +32,12 @@ export default class TodoistCompletedTasks extends Plugin {
 			name: "Fetch today's completed tasks",
 			callback: async () => {
 				new Notice("Fetching completed tasks..");
-				updateFileFromServer(this.settings, this.app, 0, FETCH_STRATEGIES.today);
+				updateFileFromServer(
+					this.settings,
+					this.app,
+					0,
+					FETCH_STRATEGIES.today
+				);
 			},
 		});
 
@@ -36,7 +46,12 @@ export default class TodoistCompletedTasks extends Plugin {
 			name: "Fetch completed tasks using dates in segments",
 			callback: async () => {
 				new Notice("Fetching completed tasks..");
-				updateFileFromServer(this.settings, this.app, 0, FETCH_STRATEGIES.fromFile);
+				updateFileFromServer(
+					this.settings,
+					this.app,
+					0,
+					FETCH_STRATEGIES.fromFile
+				);
 			},
 		});
 
