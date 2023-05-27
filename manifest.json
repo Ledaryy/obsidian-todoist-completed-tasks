@@ -1,11 +1,11 @@
 {
-	"id": "todoist-completed-tasks-plugin",
-	"name": "Todoist completed tasks",
-	"version": "1.5.0",
-	"minAppVersion": "0.15.0",
-	"description": "Add completed Todoist tasks to your Obsidian notes",
-	"author": "Andrey Kulishov",
-	"authorUrl": "https://github.com/Ledaryy",
-	"fundingUrl": "https://www.buymeacoffee.com/ledaryy",
-	"isDesktopOnly": false
+    "id": "todoist-completed-tasks-plugin",
+    "name": "Todoist completed tasks",
+    "version": "1.5.0",
+    "minAppVersion": "0.15.0",
+    "description": "Add completed Todoist tasks to your Obsidian notes",
+    "author": "Andrey Kulishov",
+    "authorUrl": "https://github.com/Ledaryy",
+    "fundingUrl": "https://www.buymeacoffee.com/ledaryy",
+    "isDesktopOnly": false
 }
