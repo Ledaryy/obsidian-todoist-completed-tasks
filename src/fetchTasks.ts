@@ -5,6 +5,7 @@ export interface RawTodoistTask {
 	readonly parentId: string | null;
 	readonly content: string;
 	readonly dateCompleted: string | null;
+	readonly projectId: string;
 }
 
 function generateRawTodoistTask(
@@ -17,6 +18,7 @@ function generateRawTodoistTask(
 			parentId: task.item.parent_id,
 			content: task.item.content,
 			dateCompleted: task.item.completed_at,
+			projectId: task.project.id,
 		};
 	} else {
 		return {
@@ -24,6 +26,7 @@ function generateRawTodoistTask(
 			parentId: null as null,
 			content: task.content,
 			dateCompleted: task.completed_at,
+			projectId: task.project_id,
 		};
 	}
 }
@@ -67,6 +70,8 @@ export async function fetchTasks(
 		if (completedTasksMetadata.items.length === 0) {
 			return mappedResults;
 		}
+
+		const projectsMetadata = completedTasksMetadata.projects;
 
 		new Notice(
 			completedTasksMetadata.items.length +
@@ -118,7 +123,10 @@ export async function fetchTasks(
 			});
 		}
 
-		return mappedResults;
+		return {
+			tasksResults: mappedResults,
+			projectsResults: projectsMetadata,
+		};
 	} catch (e) {
 		let errorMsg = "";
 		switch (e.httpStatusCode) {

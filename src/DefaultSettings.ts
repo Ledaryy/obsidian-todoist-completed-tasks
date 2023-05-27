@@ -6,6 +6,7 @@ export interface TodoistSettings {
 	taskPrefix: string;
 	taskPostfix: string;
 	renderSubtasks: boolean;
+	renderProjectsHeaders: boolean;
 }
 
 export const DEFAULT_SETTINGS: TodoistSettings = {
@@ -16,4 +17,5 @@ export const DEFAULT_SETTINGS: TodoistSettings = {
 	taskPrefix: "*",
 	taskPostfix: "",
 	renderSubtasks: true,
+	renderProjectsHeaders: true,
 };

@@ -15,6 +15,11 @@ You can use the HTML in the prefix/postfix to make it look better. For example, 
 Demo:
 ![advanced_prefix_postfix_demo](https://github.com/Ledaryy/obsidian-todoist-completed-tasks/blob/master/static/img/postfix.png)
 
+## Render project name as header
+The Plugin will structure all the task below corresponding project name. Unfortunately it is not possible at the moment to render sub projects names, so the will be rendered as a regular project. But I will try to implement it in the future.
+Demo:
+![advanced_render_project_name_as_header_demo](https://github.com/Ledaryy/obsidian-todoist-completed-tasks/blob/master/static/img/projects_headers.png)
+
 ## Fetching today's tasks
 There are a bit more details on how the plugin fetches the "today's" tasks.
 The plugin gets the current day number and your timezone from Obsidian. Then it gets a time range from 00:00 to 23:59 for that day. Then it converts it to UTC (because all completed tasks time is stored in UTC at the Todoist server). And finally, it fetches the tasks from Todoist API.
