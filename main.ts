@@ -28,7 +28,7 @@ export default class TodoistCompletedTasks extends Plugin {
         );
 
         this.addCommand({
-            id: "todoist-fetch-completed-tasks",
+            id: "todoist-fetch-today-completed-tasks",
             name: "Fetch today's completed tasks",
             callback: async () => {
                 new Notice("Fetching completed tasks..");
