@@ -3,7 +3,6 @@ import { updateFileFromServer } from "./src/updateFileContent";
 import { DEFAULT_SETTINGS, TodoistSettings } from "./src/DefaultSettings";
 import { migrateSettings } from "./src/settingsMigrations";
 import { ExampleModal } from "./src/modal";
-import { getTimeframesForLastNHoursWithoutOffset } from "./src/utils";
 import { TodoistPluginSettingTab } from "./src/settingsTabs";
 import { FETCH_STRATEGIES } from "./src/constants";
 
@@ -70,33 +69,14 @@ export default class TodoistCompletedTasks extends Plugin {
                         return;
                     }
 
-                    let times = getTimeframesForLastNHoursWithoutOffset(
-                        Number(result)
-                    );
-                    const {
-                        timeStartFormattedDate,
-                        timeStartFormattedTime,
-                        timeEndFormattedDate,
-                        timeEndFormattedTime,
-                    } = times;
-
                     if (this.settings.renderSubtasks) {
                         new Notice(
                             `You are fetching completed tasks with "Render subtasks" enabled. ` +
-                                `\nThis will limit the number of tasks fetched to 30.` +
-                                `\nMessage will be removed after 30 sec.`,
-                            30000
+                                `\nThis will limit the number of tasks fetched to 30.`,
+                            15000
                         );
                     }
 
-                    new Notice(
-                        `Fetching completed tasks for last ${result} hours.. ` +
-                            `\nTimerange, from: \n${timeStartFormattedDate} ${timeStartFormattedTime} ` +
-                            `\nto: ` +
-                            `\n${timeEndFormattedDate} ${timeEndFormattedTime}. ` +
-                            `\nMessage will be removed after 30 sec.`,
-                        30000
-                    );
                     updateFileFromServer(
                         this.settings,
                         this.app,

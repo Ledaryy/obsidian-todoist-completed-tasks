@@ -5,85 +5,46 @@ import {
     FETCH_STRATEGIES,
 } from "./constants";
 
-function getTimeframesForUsersToday(): any {
-    let currentTime = new Date();
-    currentTime.setHours(0, 0, 0, 0);
-
-    const taskStartInServerTime =
-        currentTime.getTime() + currentTime.getTimezoneOffset() * 60 * 1000;
-    const timeStartFormattedDate = moment(taskStartInServerTime).format(
-        "YYYY-MM-DD"
+function getTimeframesForUsersToday() {
+    const now = new Date();
+    const startLocal = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate()
     );
-    const timeStartFormattedTime = moment(taskStartInServerTime).format(
-        "HH:mm"
+    const endLocal = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        23,
+        59,
+        59
     );
 
-    const taskEndInServerTime =
-        currentTime.getTime() +
-        currentTime.getTimezoneOffset() * 60 * 1000 +
-        24 * 60 * 60 * 1000;
-    const timeEndFormattedDate =
-        moment(taskEndInServerTime).format("YYYY-MM-DD");
-    const timeEndFormattedTime = moment(taskEndInServerTime).format("HH:mm");
+    const mStart = moment(startLocal);
+    const mEnd = moment(endLocal);
 
     return {
-        timeStartFormattedDate,
-        timeStartFormattedTime,
-        timeEndFormattedDate,
-        timeEndFormattedTime,
+        timeStartFormattedDate: mStart.format("YYYY-MM-DD"),
+        timeStartFormattedTime: mStart.format("HH:mm:ss"),
+        timeEndFormattedDate: mEnd.format("YYYY-MM-DD"),
+        timeEndFormattedTime: mEnd.format("HH:mm:ss"),
     };
 }
 
 function getTimeframesForLastNHours(hours: number) {
-    let currentTime = new Date();
+    const now = new Date();
+    const startLocal = new Date(now.getTime() - hours * 60 * 60 * 1000);
+    const endLocal = now;
 
-    const taskStartInServerTime =
-        currentTime.getTime() +
-        currentTime.getTimezoneOffset() * 60 * 1000 -
-        hours * 60 * 60 * 1000;
-    const timeStartFormattedDate = moment(taskStartInServerTime).format(
-        "YYYY-MM-DD"
-    );
-    const timeStartFormattedTime = moment(taskStartInServerTime).format(
-        "HH:mm"
-    );
-
-    const taskEndInServerTime =
-        currentTime.getTime() + currentTime.getTimezoneOffset() * 60 * 1000;
-    const timeEndFormattedDate =
-        moment(taskEndInServerTime).format("YYYY-MM-DD");
-    const timeEndFormattedTime = moment(taskEndInServerTime).format("HH:mm");
+    const mStart = moment(startLocal);
+    const mEnd = moment(endLocal);
 
     return {
-        timeStartFormattedDate,
-        timeStartFormattedTime,
-        timeEndFormattedDate,
-        timeEndFormattedTime,
-    };
-}
-
-function getTimeframesForLastNHoursWithoutOffset(hours: number) {
-    let currentTime = new Date();
-
-    const taskStartInServerTime =
-        currentTime.getTime() - hours * 60 * 60 * 1000;
-    const timeStartFormattedDate = moment(taskStartInServerTime).format(
-        "YYYY-MM-DD"
-    );
-    const timeStartFormattedTime = moment(taskStartInServerTime).format(
-        "HH:mm"
-    );
-
-    const taskEndInServerTime = currentTime.getTime();
-    const timeEndFormattedDate =
-        moment(taskEndInServerTime).format("YYYY-MM-DD");
-    const timeEndFormattedTime = moment(taskEndInServerTime).format("HH:mm");
-
-    return {
-        timeStartFormattedDate,
-        timeStartFormattedTime,
-        timeEndFormattedDate,
-        timeEndFormattedTime,
+        timeStartFormattedDate: mStart.format("YYYY-MM-DD"),
+        timeStartFormattedTime: mStart.format("HH:mm:ss"),
+        timeEndFormattedDate: mEnd.format("YYYY-MM-DD"),
+        timeEndFormattedTime: mEnd.format("HH:mm:ss"),
     };
 }
 
@@ -91,41 +52,32 @@ function getTimeFromKeySegments(fileContent: string) {
     const startString = fileContent.match(CONSTANTS_REGEX.regexStartCompiled);
     const endString = fileContent.match(CONSTANTS_REGEX.regexEndCompiled);
 
-    let datetimeRegex = /(\d{4}-\d{2}-\d{2} \d{2}:\d{2})/;
-    const startDateString = startString[0].match(datetimeRegex);
-    const endDateString = endString[0].match(datetimeRegex);
+    const datetimeRegex = /(\d{4}-\d{2}-\d{2} \d{2}:\d{2})/;
+    const startDateString = startString[0].match(datetimeRegex)[0];
+    const endDateString = endString[0].match(datetimeRegex)[0];
 
-    let currentTimeObj = new Date();
-    let startTimeObj = new Date(startDateString[0]);
-    let endTimeObj = new Date(endDateString[0]);
+    const startTimeObj = new Date(startDateString);
+    const endTimeObj = new Date(endDateString);
 
-    const taskStartInServerTime =
-        startTimeObj.getTime() + currentTimeObj.getTimezoneOffset() * 60 * 1000;
-    const timeStartFormattedDate = moment(taskStartInServerTime).format(
-        "YYYY-MM-DD"
-    );
-    const timeStartFormattedTime = moment(taskStartInServerTime).format(
-        "HH:mm"
-    );
-
-    const taskEndInServerTime =
-        endTimeObj.getTime() + currentTimeObj.getTimezoneOffset() * 60 * 1000;
-    const timeEndFormattedDate =
-        moment(taskEndInServerTime).format("YYYY-MM-DD");
-    const timeEndFormattedTime = moment(taskEndInServerTime).format("HH:mm");
+    const mStart = moment(startTimeObj);
+    const mEnd = moment(endTimeObj);
 
     if (
-        timeStartFormattedDate === "Invalid date" ||
-        timeEndFormattedDate === "Invalid date"
+        mStart.format("YYYY-MM-DD") === "Invalid date" ||
+        mEnd.format("YYYY-MM-DD") === "Invalid date"
     ) {
+        new Notice(
+            "Invalid date format. Please use 'YYYY-MM-DD HH:mm' format.",
+            10000
+        );
         return null;
     }
 
     return {
-        timeStartFormattedDate,
-        timeStartFormattedTime,
-        timeEndFormattedDate,
-        timeEndFormattedTime,
+        timeStartFormattedDate: mStart.format("YYYY-MM-DD"),
+        timeStartFormattedTime: mStart.format("HH:mm"),
+        timeEndFormattedDate: mEnd.format("YYYY-MM-DD"),
+        timeEndFormattedTime: mEnd.format("HH:mm"),
         startString,
         endString,
     };
@@ -192,7 +144,6 @@ function segmentsCheck(
 export {
     getTimeframesForUsersToday,
     getTimeframesForLastNHours,
-    getTimeframesForLastNHoursWithoutOffset,
     getTimeFromKeySegments,
     settingsCheck,
     segmentsCheck,
