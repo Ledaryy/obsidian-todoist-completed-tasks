@@ -50,12 +50,14 @@ export async function updateFileFromServer(
         settings.renderSubtasks
     );
 
-    if (fetchResults.tasksResults.length === 0) {
-        new Notice("No completed tasks found for the given timeframe");
+    if (fetchResults.length === 0) {
+        new Notice(
+            "No completed tasks found for the given timeframe \nSometimes Todoist API returns empty results. \nPlease try again later."
+        );
         return;
     }
 
-    let formattedTasks = prepareTasksForRendering(fetchResults.tasksResults);
+    const formattedTasks = prepareTasksForRendering(fetchResults.tasksResults);
     let renderedText = renderTasksAsText(
         formattedTasks,
         fetchResults.projectsResults,

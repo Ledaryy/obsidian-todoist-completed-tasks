@@ -10,7 +10,7 @@
         "format": "prettier --write ."
     },
     "keywords": [],
-    "author": "Andrew 'Ledary' Kulishov",
+    "author": "Andrey 'Ledary' Kulish",
     "license": "MIT",
     "devDependencies": {
         "@types/node": "^16.11.6",
