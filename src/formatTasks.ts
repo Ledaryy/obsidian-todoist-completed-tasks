@@ -66,7 +66,7 @@ function renderTasksAsText(
     function renderTree(nodes: TodoistTask[], indent: number): string[] {
         return [...nodes].reverse().flatMap((t, idx) => {
             const tabs = settings.renderProjectsHeaders
-                ? "\t".repeat(indent + 1)
+                ? ""
                 : "\t".repeat(indent);
             const line = `${tabs}${renderTaskPrefix(t, idx)} ${
                 t.content
@@ -84,7 +84,7 @@ function renderTasksAsText(
         for (const [projId, meta] of Object.entries(projectsMetadata)) {
             const projTasks = tasks.filter((t) => t.projectId === projId);
             if (!projTasks.length) continue;
-            allLines.push(`* ${meta.name}`);
+            allLines.push(`##### ${meta.name}`);
             allLines.push(...renderTree(projTasks, 0));
         }
     } else {
