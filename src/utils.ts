@@ -12,17 +12,20 @@ function getTimeframesForUsersToday() {
         now.getMonth(),
         now.getDate()
     );
+    // Set end time to 23:59:59.999 to include all tasks completed before midnight
     const endLocal = new Date(
         now.getFullYear(),
         now.getMonth(),
         now.getDate(),
         23,
         59,
-        59
+        59,
+        999
     );
 
-    const mStart = moment(startLocal);
-    const mEnd = moment(endLocal);
+    // Convert local time to UTC for Todoist API (which stores times in UTC)
+    const mStart = moment(startLocal).utc();
+    const mEnd = moment(endLocal).utc();
 
     return {
         timeStartFormattedDate: mStart.format("YYYY-MM-DD"),
@@ -37,8 +40,9 @@ function getTimeframesForLastNHours(hours: number) {
     const startLocal = new Date(now.getTime() - hours * 60 * 60 * 1000);
     const endLocal = now;
 
-    const mStart = moment(startLocal);
-    const mEnd = moment(endLocal);
+    // Convert local time to UTC for Todoist API (which stores times in UTC)
+    const mStart = moment(startLocal).utc();
+    const mEnd = moment(endLocal).utc();
 
     return {
         timeStartFormattedDate: mStart.format("YYYY-MM-DD"),
