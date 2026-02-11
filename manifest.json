@@ -1,7 +1,7 @@
 {
     "id": "todoist-completed-tasks-plugin",
     "name": "Todoist completed tasks",
-    "version": "1.5.1",
+    "version": "1.5.2-apifix.0",
     "minAppVersion": "0.15.0",
     "description": "Add completed Todoist tasks to your Obsidian notes",
     "author": "Andrey Kulish",
