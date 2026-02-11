@@ -49,7 +49,7 @@ export async function fetchTasks(
 
     try {
         const url =
-            `https://api.todoist.com/sync/v9/completed/get_all?since=` +
+            `https://api.todoist.com/api/v1/tasks/completed?since=` +
             timeStartFormattedDate +
             `T` +
             timeStartFormattedTime +
@@ -152,7 +152,7 @@ export async function fetchSingleTask(
     parentId: string
 ): Promise<any> {
     try {
-        const url = `https://api.todoist.com/sync/v9/items/get?item_id=${parentId}`;
+        const url = `https://api.todoist.com/api/v1/tasks?task_id=${parentId}`;
         let parentTask = await fetch(url, {
             headers: {
                 Authorization: `Bearer ${authToken}`,
