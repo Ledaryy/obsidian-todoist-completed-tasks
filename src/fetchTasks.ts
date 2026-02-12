@@ -48,16 +48,17 @@ export async function fetchTasks(
     let mappedResults: any[] = [];
 
     try {
+        // Add 'Z' suffix to indicate UTC timezone for Todoist API
         const url =
             `https://api.todoist.com/api/v1/tasks/completed?since=` +
             timeStartFormattedDate +
             `T` +
             timeStartFormattedTime +
-            `&until=` +
+            `Z&until=` +
             timeEndFormattedDate +
             `T` +
             timeEndFormattedTime +
-            `&limit=${limit}`;
+            `Z&limit=${limit}`;
         const completedTasksMetadata = await fetch(url, {
             headers: {
                 Authorization: `Bearer ${authToken}`,
