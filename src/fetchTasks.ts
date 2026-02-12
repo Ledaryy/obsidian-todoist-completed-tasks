@@ -152,7 +152,7 @@ export async function fetchSingleTask(
     parentId: string
 ): Promise<any> {
     try {
-        const url = `https://api.todoist.com/api/v1/tasks?ids=${parentId}`;
+        const url = `https://api.todoist.com/api/v1/tasks/${parentId}`;
         let parentTask = await fetch(url, {
             headers: {
                 Authorization: `Bearer ${authToken}`,
@@ -160,7 +160,7 @@ export async function fetchSingleTask(
         });
         const task = await parentTask.json();
 
-        return generateRawTodoistTask(task.results[0], true);
+        return generateRawTodoistTask(task, true);
     } catch (e) {
         let errorMsg = "";
         switch (e.httpStatusCode) {
