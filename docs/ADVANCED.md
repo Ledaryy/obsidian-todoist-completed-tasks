@@ -14,6 +14,9 @@ But I do still recommend using obsidian comments (default tags). Because you can
 The plugin will render the tasks with the prefix and postfix.
 You can use the HTML in the prefix/postfix to make it look better. For example, this is how I use it. There is a dash and a task finish DateTime. All wrapped in a span with a grey colour and small font size.
 `<span style="color:grey; font-size:10px">- {task_finish_datetime}</span>`
+
+You can also use `{link}` to insert a direct web link to the task in Todoist (e.g. `https://app.todoist.com/app/task/<taskId>`). This is useful if you keep comments and details in your Todoist tasks and want to quickly jump back to them.
+Example: `[Open in Todoist]({link})` will render a clickable Markdown link to the task.
 Demo:
 ![advanced_prefix_postfix_demo](https://github.com/Ledaryy/obsidian-todoist-completed-tasks/blob/master/static/img/postfix.png)
 
