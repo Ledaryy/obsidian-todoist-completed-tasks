@@ -52,11 +52,17 @@ function renderTasksAsText(
         return dt;
     }
 
+    function renderTaskLink(task: TodoistTask): string {
+        return `https://app.todoist.com/app/task/${task.taskId}`;
+    }
+
     function renderTaskPostfix(task: TodoistTask): string {
-        return settings.taskPostfix.replace(
-            /{task_finish_date}|{task_finish_datetime}|{current_date}|{current_datetime}/g,
-            () => renderTaskFinishDate(task)
-        );
+        return settings.taskPostfix
+            .replace(
+                /{task_finish_date}|{task_finish_datetime}|{current_date}|{current_datetime}/g,
+                () => renderTaskFinishDate(task)
+            )
+            .replace(/{link}/g, () => renderTaskLink(task));
     }
 
     function renderTaskPrefix(_t: TodoistTask, idx: number): string {
