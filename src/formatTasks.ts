@@ -107,7 +107,7 @@ function renderTasksAsText(
     }
 
     if (allLines.length === 0) return "";
-    return `\n${allLines.join("\n")}\n`;
+    return `\n${allLines.join("\n")}\n\n`;
 }
 
 export { renderTasksAsText, prepareTasksForRendering };
