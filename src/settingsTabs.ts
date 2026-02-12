@@ -142,6 +142,7 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
                     ' will be replaced with task finish date in "YYYY-MM-DD" format.' +
                     "\nAlso you can use {task_finish_datetime} and {current_datetime}" +
                     ' to get date and time in "YYYY-MM-DD HH:MM:SS" format.' +
+                    '\nUse "{task_created_date}" or "{task_created_datetime}" to show when the task was originally created.' +
                     '\nUse "{link}" to insert a direct web link to the task in Todoist.' +
                     "\nNote: Non-completed parent tasks can have completed subtasks, 'N/A' will be used for the parent in this case.";
             });

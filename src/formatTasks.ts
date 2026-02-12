@@ -6,6 +6,7 @@ export interface TodoistTask {
     taskId: string;
     content: string;
     dateCompleted: Date | null;
+    dateCreated: Date | null;
     childTasks: TodoistTask[];
     projectId?: string | null;
 }
@@ -17,6 +18,9 @@ function prepareTasksForRendering(tasks: RawTodoistTask[]): TodoistTask[] {
             content: task.content,
             dateCompleted: task.dateCompleted
                 ? new Date(task.dateCompleted)
+                : null,
+            dateCreated: task.dateCreated
+                ? new Date(task.dateCreated)
                 : null,
             projectId: task.projectId,
             childTasks: [],
@@ -52,6 +56,14 @@ function renderTasksAsText(
         return dt;
     }
 
+    function renderTaskCreatedDate(task: TodoistTask): string {
+        if (!task.dateCreated) return "N/A";
+        const m = moment(task.dateCreated).local();
+        const pf = settings.taskPostfix;
+        if (/\{task_created_datetime\}/.test(pf)) return m.format("YYYY-MM-DD HH:mm");
+        return m.format("YYYY-MM-DD");
+    }
+
     function renderTaskLink(task: TodoistTask): string {
         return `https://app.todoist.com/app/task/${task.taskId}`;
     }
@@ -62,6 +74,7 @@ function renderTasksAsText(
                 /{task_finish_date}|{task_finish_datetime}|{current_date}|{current_datetime}/g,
                 () => renderTaskFinishDate(task)
             )
+            .replace(/{task_created_date}|{task_created_datetime}/g, () => renderTaskCreatedDate(task))
             .replace(/{link}/g, () => renderTaskLink(task));
     }
 
