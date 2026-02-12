@@ -1,27 +1,11 @@
 import { moment, Notice } from "obsidian";
-import {
-    CONSTANTS_SEGMENTS,
-    CONSTANTS_REGEX,
-    FETCH_STRATEGIES,
-} from "./constants";
+import { CONSTANTS_SEGMENTS, CONSTANTS_REGEX, FETCH_STRATEGIES } from "./constants";
 
 function getTimeframesForUsersToday() {
     const now = new Date();
-    const startLocal = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate()
-    );
+    const startLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     // Set end time to 23:59:59.999 to include all tasks completed before midnight
-    const endLocal = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate(),
-        23,
-        59,
-        59,
-        999
-    );
+    const endLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
 
     // Convert local time to UTC for Todoist API (which stores times in UTC)
     const mStart = moment(startLocal).utc();
@@ -70,10 +54,7 @@ function getTimeFromKeySegments(fileContent: string) {
         mStart.format("YYYY-MM-DD") === "Invalid date" ||
         mEnd.format("YYYY-MM-DD") === "Invalid date"
     ) {
-        new Notice(
-            "Invalid date format. Please use 'YYYY-MM-DD HH:mm' format.",
-            10000
-        );
+        new Notice("Invalid date format. Please use 'YYYY-MM-DD HH:mm' format.", 10000);
         return null;
     }
 
@@ -88,14 +69,8 @@ function getTimeFromKeySegments(fileContent: string) {
 }
 
 function settingsCheck(settings: any) {
-    if (
-        settings.keywordSegmentStart === "" ||
-        settings.keywordSegmentEnd === ""
-    ) {
-        new Notice(
-            "No keyword segment set. Please set one in the settings.",
-            10000
-        );
+    if (settings.keywordSegmentStart === "" || settings.keywordSegmentEnd === "") {
+        new Notice("No keyword segment set. Please set one in the settings.", 10000);
         return false;
     }
     if (settings.authToken === "") {
@@ -105,15 +80,9 @@ function settingsCheck(settings: any) {
     return true;
 }
 
-function segmentsCheck(
-    fileContent: string,
-    settings: any,
-    fetchStrategy: string
-) {
+function segmentsCheck(fileContent: string, settings: any, fetchStrategy: string) {
     if (fetchStrategy === FETCH_STRATEGIES.fromFile) {
-        const startString = fileContent.match(
-            CONSTANTS_REGEX.regexStartCompiled
-        );
+        const startString = fileContent.match(CONSTANTS_REGEX.regexStartCompiled);
         const endString = fileContent.match(CONSTANTS_REGEX.regexEndCompiled);
 
         if (startString === null || endString === null) {
@@ -125,10 +94,7 @@ function segmentsCheck(
             return false;
         }
     }
-    if (
-        fetchStrategy === FETCH_STRATEGIES.today ||
-        fetchStrategy === FETCH_STRATEGIES.lastNHours
-    ) {
+    if (fetchStrategy === FETCH_STRATEGIES.today || fetchStrategy === FETCH_STRATEGIES.lastNHours) {
         if (
             !fileContent.includes(settings.keywordSegmentStart) ||
             !fileContent.includes(settings.keywordSegmentEnd)

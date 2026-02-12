@@ -1,18 +1,18 @@
 ### Features plan
 
--   [x] Remove boilerplate code, prepare for Obsidian plugin store submission.
--   [x] Correct render for subtasks.
-    -   Currently, everything rendered as a list
--   [x] Let the user specify the default prefix for tasks.
-    -   Currently, it is `*` (bulletpoint)
--   [x] Timezone support
-    -   Currently, the plugin uses the timezone of the computer and tries to calculate the time difference between the computer and the Todoist server
-    -   This is not always correct. And is not tested on different timezones
--   [x] Fetch completed tasks for >1 day.
-    -   Currently, the plugin fetches only tasks completed today from 00:00 to 23:59
--   [x] Show task completed datetime/description (added as part of postfix feature)
-    -   Currently, the plugin only shows the task name
--   [ ] Sortation of tasks (by date, by project, by priority)
-    -   Currently, the plugin does not sort the tasks
--   [ ] Test coverage
-    -   Currently, the plugin does not have any tests
+- [x] Remove boilerplate code, prepare for Obsidian plugin store submission.
+- [x] Correct render for subtasks.
+    - Currently, everything rendered as a list
+- [x] Let the user specify the default prefix for tasks.
+    - Currently, it is `*` (bulletpoint)
+- [x] Timezone support
+    - Currently, the plugin uses the timezone of the computer and tries to calculate the time difference between the computer and the Todoist server
+    - This is not always correct. And is not tested on different timezones
+- [x] Fetch completed tasks for >1 day.
+    - Currently, the plugin fetches only tasks completed today from 00:00 to 23:59
+- [x] Show task completed datetime/description (added as part of postfix feature)
+    - Currently, the plugin only shows the task name
+- [ ] Sortation of tasks (by date, by project, by priority)
+    - Currently, the plugin does not sort the tasks
+- [ ] Test coverage
+    - Currently, the plugin does not have any tests

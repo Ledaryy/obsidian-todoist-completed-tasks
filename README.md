@@ -25,10 +25,10 @@ This obsidian plugin fetches your completed tasks from Todoist and adds them to 
 
 ## Features
 
--   Fetch today's completed tasks
--   Fetch completed tasks for the last N hours
--   Fetch completed tasks using dates from segments ([Templater](https://github.com/SilentVoid13/Templater) support)
--   Customizable prefix and postfix for each task ([Obsidian Tasks](https://github.com/obsidian-tasks-group/obsidian-tasks) support)
+- Fetch today's completed tasks
+- Fetch completed tasks for the last N hours
+- Fetch completed tasks using dates from segments ([Templater](https://github.com/SilentVoid13/Templater) support)
+- Customizable prefix and postfix for each task ([Obsidian Tasks](https://github.com/obsidian-tasks-group/obsidian-tasks) support)
 
 ## Say Thanks 🙏
 

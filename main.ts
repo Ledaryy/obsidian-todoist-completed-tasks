@@ -12,31 +12,17 @@ export default class TodoistCompletedTasks extends Plugin {
     async onload() {
         await this.loadSettings();
 
-        this.addRibbonIcon(
-            "sync",
-            "Fetch today's completed tasks",
-            (evt: MouseEvent) => {
-                new Notice("Fetching completed tasks..");
-                updateFileFromServer(
-                    this.settings,
-                    this.app,
-                    0,
-                    FETCH_STRATEGIES.today
-                );
-            }
-        );
+        this.addRibbonIcon("sync", "Fetch today's completed tasks", (evt: MouseEvent) => {
+            new Notice("Fetching completed tasks..");
+            updateFileFromServer(this.settings, this.app, 0, FETCH_STRATEGIES.today);
+        });
 
         this.addCommand({
             id: "todoist-fetch-today-completed-tasks",
             name: "Fetch today's completed tasks",
             callback: async () => {
                 new Notice("Fetching completed tasks..");
-                updateFileFromServer(
-                    this.settings,
-                    this.app,
-                    0,
-                    FETCH_STRATEGIES.today
-                );
+                updateFileFromServer(this.settings, this.app, 0, FETCH_STRATEGIES.today);
             },
         });
 
@@ -45,12 +31,7 @@ export default class TodoistCompletedTasks extends Plugin {
             name: "Fetch completed tasks using dates in segments",
             callback: async () => {
                 new Notice("Fetching completed tasks..");
-                updateFileFromServer(
-                    this.settings,
-                    this.app,
-                    0,
-                    FETCH_STRATEGIES.fromFile
-                );
+                updateFileFromServer(this.settings, this.app, 0, FETCH_STRATEGIES.fromFile);
             },
         });
 

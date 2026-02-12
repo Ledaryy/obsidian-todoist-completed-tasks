@@ -16,12 +16,8 @@ function prepareTasksForRendering(tasks: RawTodoistTask[]): TodoistTask[] {
         return {
             taskId: task.taskId,
             content: task.content,
-            dateCompleted: task.dateCompleted
-                ? new Date(task.dateCompleted)
-                : null,
-            dateCreated: task.dateCreated
-                ? new Date(task.dateCreated)
-                : null,
+            dateCompleted: task.dateCompleted ? new Date(task.dateCompleted) : null,
+            dateCreated: task.dateCreated ? new Date(task.dateCreated) : null,
             projectId: task.projectId,
             childTasks: [],
         };
@@ -74,7 +70,9 @@ function renderTasksAsText(
                 /{task_finish_date}|{task_finish_datetime}|{current_date}|{current_datetime}/g,
                 () => renderTaskFinishDate(task)
             )
-            .replace(/{task_created_date}|{task_created_datetime}/g, () => renderTaskCreatedDate(task))
+            .replace(/{task_created_date}|{task_created_datetime}/g, () =>
+                renderTaskCreatedDate(task)
+            )
             .replace(/{link}/g, () => renderTaskLink(task));
     }
 
@@ -87,9 +85,7 @@ function renderTasksAsText(
             const tabs = settings.renderProjectsHeaders
                 ? "\t".repeat(indent + 1)
                 : "\t".repeat(indent);
-            const line = `${tabs}${renderTaskPrefix(t, idx)} ${
-                t.content
-            } ${renderTaskPostfix(t)}`;
+            const line = `${tabs}${renderTaskPrefix(t, idx)} ${t.content} ${renderTaskPostfix(t)}`;
             if (t.childTasks.length) {
                 return [line, ...renderTree(t.childTasks, indent + 1)];
             }

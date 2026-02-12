@@ -45,8 +45,8 @@ Uses the same logic as "today's" tasks. But instead of getting the current day n
 It can be used only from the command palette (no button on the left panel for this).
 This command will require two special segments (not configurable yet)
 
--   Start segment example: `%% TCT_TEMPLATED_START 1999-12-01 00:00 %%`
--   End segment example: `%% TCT_TEMPLATED_END 2022-04-28 23:59 %%`
+- Start segment example: `%% TCT_TEMPLATED_START 1999-12-01 00:00 %%`
+- End segment example: `%% TCT_TEMPLATED_END 2022-04-28 23:59 %%`
 
 The date format is `{{YYYY-MM-DD HH:mm}}`. See the demo below.
 ![fetch_using_dates_from_template](https://github.com/Ledaryy/obsidian-todoist-completed-tasks/blob/master/static/gif/fetch_using_dates_from_template.gif)

@@ -46,12 +46,10 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
             .setName("API token")
             .setDesc(fieldDescription)
             .addText((text) =>
-                text
-                    .setValue(this.plugin.settings.authToken)
-                    .onChange(async (value) => {
-                        this.plugin.settings.authToken = value;
-                        await this.plugin.saveSettings();
-                    })
+                text.setValue(this.plugin.settings.authToken).onChange(async (value) => {
+                    this.plugin.settings.authToken = value;
+                    await this.plugin.saveSettings();
+                })
             );
     }
     private addStartLineDetector(containerEl: HTMLElement) {
@@ -65,12 +63,10 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
             .setName("Start segment")
             .setDesc(fieldDescription)
             .addText((text) =>
-                text
-                    .setValue(this.plugin.settings.keywordSegmentStart)
-                    .onChange(async (value) => {
-                        this.plugin.settings.keywordSegmentStart = value;
-                        await this.plugin.saveSettings();
-                    })
+                text.setValue(this.plugin.settings.keywordSegmentStart).onChange(async (value) => {
+                    this.plugin.settings.keywordSegmentStart = value;
+                    await this.plugin.saveSettings();
+                })
             );
     }
     private addEndLineDetector(containerEl: HTMLElement) {
@@ -84,12 +80,10 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
             .setName("End segment")
             .setDesc(fieldDescription)
             .addText((text) =>
-                text
-                    .setValue(this.plugin.settings.keywordSegmentEnd)
-                    .onChange(async (value) => {
-                        this.plugin.settings.keywordSegmentEnd = value;
-                        await this.plugin.saveSettings();
-                    })
+                text.setValue(this.plugin.settings.keywordSegmentEnd).onChange(async (value) => {
+                    this.plugin.settings.keywordSegmentEnd = value;
+                    await this.plugin.saveSettings();
+                })
             );
     }
     private addTaskPrefix(containerEl: HTMLElement) {
@@ -113,12 +107,10 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
             .setName("Prefix")
             .setDesc(fieldDescription)
             .addText((text) =>
-                text
-                    .setValue(this.plugin.settings.taskPrefix)
-                    .onChange(async (value) => {
-                        this.plugin.settings.taskPrefix = value;
-                        await this.plugin.saveSettings();
-                    })
+                text.setValue(this.plugin.settings.taskPrefix).onChange(async (value) => {
+                    this.plugin.settings.taskPrefix = value;
+                    await this.plugin.saveSettings();
+                })
             );
     }
 
@@ -130,8 +122,7 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
                 '\n"💪" - Keep it up!' +
                 '\n"✅{task_finish_date}" - to make it compatible with ';
             span.createEl("a", null, (link) => {
-                link.href =
-                    "https://github.com/obsidian-tasks-group/obsidian-tasks";
+                link.href = "https://github.com/obsidian-tasks-group/obsidian-tasks";
                 link.innerText = "Obsidian Tasks";
             });
             span.createEl("p", null, (textSpace) => {
@@ -151,12 +142,10 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
             .setName("Postfix")
             .setDesc(fieldDescription)
             .addText((text) =>
-                text
-                    .setValue(this.plugin.settings.taskPostfix)
-                    .onChange(async (value) => {
-                        this.plugin.settings.taskPostfix = value;
-                        await this.plugin.saveSettings();
-                    })
+                text.setValue(this.plugin.settings.taskPostfix).onChange(async (value) => {
+                    this.plugin.settings.taskPostfix = value;
+                    await this.plugin.saveSettings();
+                })
             );
     }
 
@@ -194,12 +183,10 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
             .setName("Render subtasks")
             .setDesc(fieldDescription)
             .addToggle((toggle) =>
-                toggle
-                    .setValue(this.plugin.settings.renderSubtasks)
-                    .onChange(async (value) => {
-                        this.plugin.settings.renderSubtasks = value;
-                        await this.plugin.saveSettings();
-                    })
+                toggle.setValue(this.plugin.settings.renderSubtasks).onChange(async (value) => {
+                    this.plugin.settings.renderSubtasks = value;
+                    await this.plugin.saveSettings();
+                })
             );
     }
 }

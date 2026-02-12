@@ -20,10 +20,7 @@ export async function updateFileFromServer(
     const editor = app.workspace.getActiveViewOfType(MarkdownView).editor;
     const fileContent = editor.getValue();
 
-    if (
-        !settingsCheck(settings) ||
-        !segmentsCheck(fileContent, settings, fetchStrategy)
-    ) {
+    if (!settingsCheck(settings) || !segmentsCheck(fileContent, settings, fetchStrategy)) {
         return;
     }
 
@@ -51,11 +48,7 @@ export async function updateFileFromServer(
         return;
     }
 
-    const fetchResults = await fetchTasks(
-        settings.authToken,
-        timeFrames,
-        settings.renderSubtasks
-    );
+    const fetchResults = await fetchTasks(settings.authToken, timeFrames, settings.renderSubtasks);
 
     if (fetchResults.length === 0) {
         new Notice(
@@ -65,11 +58,7 @@ export async function updateFileFromServer(
     }
 
     const formattedTasks = prepareTasksForRendering(fetchResults.tasksResults);
-    let renderedText = renderTasksAsText(
-        formattedTasks,
-        fetchResults.projectsResults,
-        settings
-    );
+    let renderedText = renderTasksAsText(formattedTasks, fetchResults.projectsResults, settings);
 
     let rangeStart = fileContent.indexOf(settings.keywordSegmentStart);
     let rangeEnd = fileContent.indexOf(settings.keywordSegmentEnd);
@@ -81,11 +70,7 @@ export async function updateFileFromServer(
     } else {
         renderedText = `${settings.keywordSegmentStart}${renderedText}`;
     }
-    editor.replaceRange(
-        renderedText,
-        editor.offsetToPos(rangeStart),
-        editor.offsetToPos(rangeEnd)
-    );
+    editor.replaceRange(renderedText, editor.offsetToPos(rangeStart), editor.offsetToPos(rangeEnd));
 
     new Notice("Completed tasks loaded.");
 }
