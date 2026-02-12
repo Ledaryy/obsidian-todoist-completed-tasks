@@ -78,8 +78,8 @@ function getTimeFromKeySegments(fileContent: string) {
         timeStartFormattedTime: mStart.format("HH:mm"),
         timeEndFormattedDate: mEnd.format("YYYY-MM-DD"),
         timeEndFormattedTime: mEnd.format("HH:mm"),
-        startString,
-        endString,
+        startString: startString[0],
+        endString: endString[0],
     };
 }
 

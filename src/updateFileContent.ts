@@ -27,7 +27,14 @@ export async function updateFileFromServer(
         return;
     }
 
-    let timeFrames = null;
+    let timeFrames: {
+        timeStartFormattedDate: string;
+        timeStartFormattedTime: string;
+        timeEndFormattedDate: string;
+        timeEndFormattedTime: string;
+        startString?: string;
+        endString?: string;
+    } | null = null;
 
     if (fetchStrategy === FETCH_STRATEGIES.today) {
         timeFrames = getTimeframesForUsersToday();

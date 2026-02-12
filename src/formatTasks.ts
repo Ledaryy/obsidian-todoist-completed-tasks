@@ -3,7 +3,7 @@ import { TodoistSettings } from "./DefaultSettings";
 import { RawTodoistTask } from "./fetchTasks";
 
 export interface TodoistTask {
-    taskId: number;
+    taskId: string;
     content: string;
     dateCompleted: Date | null;
     childTasks: TodoistTask[];
@@ -23,7 +23,7 @@ function prepareTasksForRendering(tasks: RawTodoistTask[]): TodoistTask[] {
         };
     }
 
-    function buildHierarchy(parentId: number | null): TodoistTask[] {
+    function buildHierarchy(parentId: string | null): TodoistTask[] {
         return tasks
             .filter((t) => t.parentId === parentId)
             .map((t) => {
