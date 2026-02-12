@@ -1,5 +1,6 @@
 import { moment, Notice } from "obsidian";
 import { CONSTANTS_SEGMENTS, CONSTANTS_REGEX, FETCH_STRATEGIES } from "./constants";
+import { TodoistSettings } from "./DefaultSettings";
 
 function getTimeframesForUsersToday() {
     const now = new Date();
@@ -40,9 +41,22 @@ function getTimeFromKeySegments(fileContent: string) {
     const startString = fileContent.match(CONSTANTS_REGEX.regexStartCompiled);
     const endString = fileContent.match(CONSTANTS_REGEX.regexEndCompiled);
 
+    if (!startString || !endString) {
+        new Notice("Could not find date segments in the file.", 10000);
+        return null;
+    }
+
     const datetimeRegex = /(\d{4}-\d{2}-\d{2} \d{2}:\d{2})/;
-    const startDateString = startString[0].match(datetimeRegex)[0];
-    const endDateString = endString[0].match(datetimeRegex)[0];
+    const startDateMatch = startString[0].match(datetimeRegex);
+    const endDateMatch = endString[0].match(datetimeRegex);
+
+    if (!startDateMatch || !endDateMatch) {
+        new Notice("Could not parse dates from segments.", 10000);
+        return null;
+    }
+
+    const startDateString = startDateMatch[0];
+    const endDateString = endDateMatch[0];
 
     const startTimeObj = new Date(startDateString);
     const endTimeObj = new Date(endDateString);
@@ -68,7 +82,7 @@ function getTimeFromKeySegments(fileContent: string) {
     };
 }
 
-function settingsCheck(settings: any) {
+function settingsCheck(settings: TodoistSettings) {
     if (settings.keywordSegmentStart === "" || settings.keywordSegmentEnd === "") {
         new Notice("No keyword segment set. Please set one in the settings.", 10000);
         return false;
@@ -80,7 +94,7 @@ function settingsCheck(settings: any) {
     return true;
 }
 
-function segmentsCheck(fileContent: string, settings: any, fetchStrategy: string) {
+function segmentsCheck(fileContent: string, settings: TodoistSettings, fetchStrategy: string) {
     if (fetchStrategy === FETCH_STRATEGIES.fromFile) {
         const startString = fileContent.match(CONSTANTS_REGEX.regexStartCompiled);
         const endString = fileContent.match(CONSTANTS_REGEX.regexEndCompiled);

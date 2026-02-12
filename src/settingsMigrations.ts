@@ -1,6 +1,8 @@
 import { TodoistSettings, DEFAULT_SETTINGS } from "./DefaultSettings";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function migrateSettings(settings: any): TodoistSettings {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let newSettings: any = settings;
     if (getSettingsVersion(newSettings) == 0) {
         newSettings = migrateToV1(settings as TodoistSettingV0);
@@ -21,9 +23,10 @@ export function migrateSettings(settings: any): TodoistSettings {
     return newSettings;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getSettingsVersion(settings: any): number {
     // v0 didn't have this field
-    return settings.settingsVersion ?? 0;
+    return (settings.settingsVersion as number) ?? 0;
 }
 
 function migrateToV1(settings: TodoistSettingV0): TodoistSettingsV1 {

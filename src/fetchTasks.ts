@@ -60,11 +60,25 @@ function generateRawTodoistTask(task: TodoistApiTask, isSubtaskRendering: boolea
     }
 }
 
+export interface TimeFrames {
+    timeStartFormattedDate: string;
+    timeStartFormattedTime: string;
+    timeEndFormattedDate: string;
+    timeEndFormattedTime: string;
+    startString?: string;
+    endString?: string;
+}
+
+export interface FetchTasksResult {
+    tasksResults: RawTodoistTask[];
+    projectsResults: Record<string, { name: string }>;
+}
+
 export async function fetchTasks(
     authToken: string,
-    timeFrames: any,
+    timeFrames: TimeFrames,
     renderSubtasks: boolean
-): Promise<any> {
+): Promise<FetchTasksResult> {
     const {
         timeStartFormattedDate,
         timeStartFormattedTime,
@@ -74,7 +88,7 @@ export async function fetchTasks(
 
     const limit = renderSubtasks ? 30 : 200;
 
-    let mappedResults: any[] = [];
+    let mappedResults: RawTodoistTask[] = [];
 
     try {
         // Add 'Z' suffix to indicate UTC timezone for Todoist API
@@ -98,7 +112,7 @@ export async function fetchTasks(
 
         // If there are no completed tasks, return an empty array
         if (completedTasksMetadata.items.length === 0) {
-            return mappedResults;
+            return { tasksResults: mappedResults, projectsResults: {} };
         }
 
         const projectsMetadata = completedTasksMetadata.projects;
@@ -113,20 +127,21 @@ export async function fetchTasks(
             );
             mappedResults = await Promise.all(completedTasksPromises);
 
-            let childTasks = mappedResults.filter((task: RawTodoistTask) => task.parentId !== null);
+            const childTasks = mappedResults.filter(
+                (task: RawTodoistTask) => task.parentId !== null
+            );
 
-            let queuedParentTasks = [] as string[];
-            childTasks.forEach((task: RawTodoistTask) => {
+            const queuedParentTasks: string[] = [];
+            for (const task of childTasks) {
                 const parentTask = mappedResults.find(
                     (t: RawTodoistTask) => t.taskId === task.parentId
                 );
                 if (!parentTask && task.parentId && !queuedParentTasks.includes(task.parentId)) {
-                    let missedParentTask = fetchSingleTask(authToken, task.parentId);
+                    const missedParentTask = await fetchSingleTask(authToken, task.parentId);
                     mappedResults.push(missedParentTask);
                     queuedParentTasks.push(task.parentId);
                 }
-            });
-            mappedResults = await Promise.all(mappedResults);
+            }
 
             // Merge metadata dates into the task objects
             mappedResults.forEach((task: RawTodoistTask) => {
@@ -150,9 +165,10 @@ export async function fetchTasks(
             tasksResults: mappedResults,
             projectsResults: projectsMetadata,
         };
-    } catch (e) {
+    } catch (e: unknown) {
+        const err = e as Record<string, unknown>;
         let errorMsg = "";
-        switch (e.httpStatusCode) {
+        switch (err.httpStatusCode) {
             case undefined:
                 errorMsg = `There was a problem pulling data from Todoist. Is your internet connection working?`;
                 break;
@@ -162,7 +178,7 @@ export async function fetchTasks(
                     " your API token is set correctly in the settings.";
                 break;
             default:
-                `There was a problem pulling data from Todoist. ${e.responseData}`;
+                errorMsg = `There was a problem pulling data from Todoist. ${err.responseData}`;
         }
         console.log(errorMsg, e);
         new Notice(errorMsg);
@@ -170,10 +186,13 @@ export async function fetchTasks(
     }
 }
 
-export async function fetchSingleTask(authToken: string, parentId: string): Promise<any> {
+export async function fetchSingleTask(
+    authToken: string,
+    parentId: string
+): Promise<RawTodoistTask> {
     try {
         const url = `https://api.todoist.com/api/v1/tasks/${parentId}`;
-        let parentTask = await fetch(url, {
+        const parentTask = await fetch(url, {
             headers: {
                 Authorization: `Bearer ${authToken}`,
             },
@@ -181,9 +200,10 @@ export async function fetchSingleTask(authToken: string, parentId: string): Prom
         const task: TodoistApiTask = await parentTask.json();
 
         return generateRawTodoistTask(task, true);
-    } catch (e) {
+    } catch (e: unknown) {
+        const err = e as Record<string, unknown>;
         let errorMsg = "";
-        switch (e.httpStatusCode) {
+        switch (err.httpStatusCode) {
             case undefined:
                 errorMsg = `There was a problem pulling data from Todoist. Is your internet connection working?`;
                 break;
@@ -193,7 +213,7 @@ export async function fetchSingleTask(authToken: string, parentId: string): Prom
                     " your API token is set correctly in the settings.";
                 break;
             default:
-                `There was a problem pulling data from Todoist. ${e.responseData}`;
+                errorMsg = `There was a problem pulling data from Todoist. ${err.responseData}`;
         }
         console.log(errorMsg, e);
         new Notice(errorMsg);

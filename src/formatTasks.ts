@@ -1,4 +1,4 @@
-import { moment, Notice } from "obsidian";
+import { moment } from "obsidian";
 import { TodoistSettings } from "./DefaultSettings";
 import { RawTodoistTask } from "./fetchTasks";
 

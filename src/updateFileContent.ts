@@ -1,6 +1,6 @@
 import { App, Notice, MarkdownView } from "obsidian";
 import { TodoistSettings } from "./DefaultSettings";
-import { fetchTasks } from "./fetchTasks";
+import { fetchTasks, TimeFrames } from "./fetchTasks";
 import { renderTasksAsText, prepareTasksForRendering } from "./formatTasks";
 import { FETCH_STRATEGIES } from "./constants";
 import {
@@ -17,21 +17,19 @@ export async function updateFileFromServer(
     time: number,
     fetchStrategy: string
 ) {
-    const editor = app.workspace.getActiveViewOfType(MarkdownView).editor;
+    const view = app.workspace.getActiveViewOfType(MarkdownView);
+    if (!view) {
+        new Notice("No active markdown editor found.");
+        return;
+    }
+    const editor = view.editor;
     const fileContent = editor.getValue();
 
     if (!settingsCheck(settings) || !segmentsCheck(fileContent, settings, fetchStrategy)) {
         return;
     }
 
-    let timeFrames: {
-        timeStartFormattedDate: string;
-        timeStartFormattedTime: string;
-        timeEndFormattedDate: string;
-        timeEndFormattedTime: string;
-        startString?: string;
-        endString?: string;
-    } | null = null;
+    let timeFrames: TimeFrames | null = null;
 
     if (fetchStrategy === FETCH_STRATEGIES.today) {
         timeFrames = getTimeframesForUsersToday();
@@ -50,7 +48,7 @@ export async function updateFileFromServer(
 
     const fetchResults = await fetchTasks(settings.authToken, timeFrames, settings.renderSubtasks);
 
-    if (fetchResults.length === 0) {
+    if (fetchResults.tasksResults.length === 0) {
         new Notice(
             "No completed tasks found for the given timeframe \nSometimes Todoist API returns empty results. \nPlease try again later."
         );
@@ -64,8 +62,8 @@ export async function updateFileFromServer(
     let rangeEnd = fileContent.indexOf(settings.keywordSegmentEnd);
 
     if (fetchStrategy === FETCH_STRATEGIES.fromFile) {
-        rangeStart = fileContent.indexOf(timeFrames.startString);
-        rangeEnd = fileContent.indexOf(timeFrames.endString);
+        rangeStart = fileContent.indexOf(timeFrames.startString ?? "");
+        rangeEnd = fileContent.indexOf(timeFrames.endString ?? "");
         renderedText = `${timeFrames.startString}${renderedText}`;
     } else {
         renderedText = `${settings.keywordSegmentStart}${renderedText}`;

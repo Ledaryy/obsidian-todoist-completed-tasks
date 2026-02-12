@@ -6,12 +6,11 @@
         "module": "ESNext",
         "target": "ES6",
         "allowJs": true,
-        "noImplicitAny": true,
+        "strict": true,
         "moduleResolution": "node",
         "importHelpers": true,
         "isolatedModules": true,
         "allowSyntheticDefaultImports": true,
-        "strictNullChecks": false,
         "lib": ["DOM", "ES5", "ES6", "ES7"]
     },
     "include": ["**/*.ts"]

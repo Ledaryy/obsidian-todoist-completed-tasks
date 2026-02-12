@@ -7,7 +7,7 @@ import { TodoistPluginSettingTab } from "./src/settingsTabs";
 import { FETCH_STRATEGIES } from "./src/constants";
 
 export default class TodoistCompletedTasks extends Plugin {
-    settings: TodoistSettings;
+    settings!: TodoistSettings;
 
     async onload() {
         await this.loadSettings();
@@ -72,7 +72,7 @@ export default class TodoistCompletedTasks extends Plugin {
     }
 
     async loadSettings() {
-        let storedSettings = (await this.loadData()) ?? DEFAULT_SETTINGS;
+        const storedSettings = (await this.loadData()) ?? DEFAULT_SETTINGS;
         this.settings = migrateSettings(storedSettings);
         await this.saveSettings();
     }

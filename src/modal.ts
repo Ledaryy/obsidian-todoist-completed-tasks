@@ -1,7 +1,7 @@
 import { App, Modal, Setting } from "obsidian";
 
 export class ExampleModal extends Modal {
-    result: string;
+    result = "";
     onSubmit: (result: string) => void;
 
     constructor(app: App, onSubmit: (result: string) => void) {
@@ -34,7 +34,7 @@ export class ExampleModal extends Modal {
     }
 
     onClose() {
-        let { contentEl } = this;
+        const { contentEl } = this;
         contentEl.empty();
     }
 }

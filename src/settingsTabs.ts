@@ -30,14 +30,14 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
 
     private addApiKeySetting(containerEl: HTMLElement) {
         const fieldDescription = document.createDocumentFragment();
-        fieldDescription.createEl("span", null, (span) => {
+        fieldDescription.createEl("span", undefined, (span) => {
             span.innerText =
                 "This is your personal authentication token for Todoist. Be aware that anyone with this token " +
                 "could access all of your Todoist data. This is stored in plain text in your .obsidian/plugins folder." +
                 " Ensure that you are comfortable with the security implications before proceeding. " +
                 '\nYou can get your token from the "API token" section ';
 
-            span.createEl("a", null, (link) => {
+            span.createEl("a", undefined, (link) => {
                 link.href = "https://todoist.com/prefs/integrations";
                 link.innerText = "here.";
             });
@@ -54,7 +54,7 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
     }
     private addStartLineDetector(containerEl: HTMLElement) {
         const fieldDescription = document.createDocumentFragment();
-        fieldDescription.createEl("span", null, (span) => {
+        fieldDescription.createEl("span", undefined, (span) => {
             span.innerText =
                 "Segment for the plugin to detect the start of tasks. " +
                 "\nSupports Obsidian's comments syntax.";
@@ -71,7 +71,7 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
     }
     private addEndLineDetector(containerEl: HTMLElement) {
         const fieldDescription = document.createDocumentFragment();
-        fieldDescription.createEl("span", null, (span) => {
+        fieldDescription.createEl("span", undefined, (span) => {
             span.innerText =
                 "Segment for the plugin to detect the end of tasks. " +
                 "\nSupports Obsidian's comments syntax.";
@@ -88,7 +88,7 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
     }
     private addTaskPrefix(containerEl: HTMLElement) {
         const fieldDescription = document.createDocumentFragment();
-        fieldDescription.createEl("span", null, (span) => {
+        fieldDescription.createEl("span", undefined, (span) => {
             span.innerText =
                 "Set prefix for tasks. Popular usecases:" +
                 '\n"*" - Bullet points' +
@@ -98,7 +98,7 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
                 '\nThe special parameter "{auto_increment}" ' +
                 "will be replaced with an auto-increment number." +
                 "\nFor all other parameters, refer to the ";
-            span.createEl("a", null, (link) => {
+            span.createEl("a", undefined, (link) => {
                 link.href = "https://www.markdownguide.org/tools/obsidian/";
                 link.innerText = "Obsidian Markdown";
             });
@@ -116,16 +116,16 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
 
     private addTaskPostfix(containerEl: HTMLElement) {
         const fieldDescription = document.createDocumentFragment();
-        fieldDescription.createEl("span", null, (span) => {
+        fieldDescription.createEl("span", undefined, (span) => {
             span.innerText =
                 "Set postfix for tasks. Popular usecases:" +
                 '\n"💪" - Keep it up!' +
                 '\n"✅{task_finish_date}" - to make it compatible with ';
-            span.createEl("a", null, (link) => {
+            span.createEl("a", undefined, (link) => {
                 link.href = "https://github.com/obsidian-tasks-group/obsidian-tasks";
                 link.innerText = "Obsidian Tasks";
             });
-            span.createEl("p", null, (textSpace) => {
+            span.createEl("p", undefined, (textSpace) => {
                 textSpace.innerText =
                     'The special parameter "{current_date}"' +
                     ' will be replaced with current date in "YYYY-MM-DD" format.' +
@@ -151,7 +151,7 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
 
     private addProjectsRenderSwitch(containerEl: HTMLElement) {
         const fieldDescription = document.createDocumentFragment();
-        fieldDescription.createEl("span", null, (span) => {
+        fieldDescription.createEl("span", undefined, (span) => {
             span.innerText =
                 "Renders projects names as headers. " +
                 "\nIf disabled, projects names will not be rendered at all.";
@@ -171,7 +171,7 @@ export class TodoistPluginSettingTab extends PluginSettingTab {
 
     private addSubtaskRenderSwitch(containerEl: HTMLElement) {
         const fieldDescription = document.createDocumentFragment();
-        fieldDescription.createEl("span", null, (span) => {
+        fieldDescription.createEl("span", undefined, (span) => {
             span.innerText =
                 "You should disable this if you want to load more than 30 (up to 200) tasks. " +
                 "This is due to a limitation of the Todoist API." +
