@@ -4,7 +4,7 @@
     "version": "1.5.2",
     "minAppVersion": "0.15.0",
     "description": "Add completed Todoist tasks to your Obsidian notes",
-    "author": "Andrey Kulish",
+    "author": "Andrey Kulishov",
     "authorUrl": "https://github.com/Ledaryy",
     "fundingUrl": "https://www.buymeacoffee.com/ledaryy",
     "isDesktopOnly": false
