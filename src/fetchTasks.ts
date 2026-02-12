@@ -14,11 +14,11 @@ function generateRawTodoistTask(
 ): RawTodoistTask {
     if (isSubtaskRendering) {
         return {
-            taskId: task.item.id,
-            parentId: task.item.parent_id,
-            content: task.item.content,
-            dateCompleted: task.item.completed_at,
-            projectId: task.project.id,
+            taskId: task.id,
+            parentId: task.parent_id,
+            content: task.content,
+            dateCompleted: task.completed_at,
+            projectId: task.project_id
         };
     } else {
         return {
@@ -152,7 +152,7 @@ export async function fetchSingleTask(
     parentId: string
 ): Promise<any> {
     try {
-        const url = `https://api.todoist.com/api/v1/tasks?task_id=${parentId}`;
+        const url = `https://api.todoist.com/api/v1/tasks?ids=${parentId}`;
         let parentTask = await fetch(url, {
             headers: {
                 Authorization: `Bearer ${authToken}`,
@@ -160,7 +160,7 @@ export async function fetchSingleTask(
         });
         const task = await parentTask.json();
 
-        return generateRawTodoistTask(task, true);
+        return generateRawTodoistTask(task.results[0], true);
     } catch (e) {
         let errorMsg = "";
         switch (e.httpStatusCode) {
